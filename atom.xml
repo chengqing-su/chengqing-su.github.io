@@ -1,0 +1,610 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+  <title>CQ的笔记</title>
+  
+  <subtitle>不断学习，不断进步</subtitle>
+  <link href="https://chengqing.dev/atom.xml" rel="self"/>
+  
+  <link href="https://chengqing.dev/"/>
+  <updated>2023-03-04T12:43:36.000Z</updated>
+  <id>https://chengqing.dev/</id>
+  
+  <author>
+    <name>ChengQing</name>
+    
+  </author>
+  
+  <generator uri="https://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>腾讯云集成Azure AD实现多角色SSO</title>
+    <link href="https://chengqing.dev/2023/03/04/tencent-cloud-azure-ad-sso/"/>
+    <id>https://chengqing.dev/2023/03/04/tencent-cloud-azure-ad-sso/</id>
+    <published>2023-03-04T12:43:36.000Z</published>
+    <updated>2023-03-04T12:43:36.000Z</updated>
+    
+    <content type="html"><![CDATA[<p>在之前的博客《利用Azure AD实现Homelab环境中应用的统一认证和授权》中，我们详细讨论了如何使用Azure AD来实现统一认证。而在《Jenkins集成Azure AD》中，我们详细介绍了自托管的Jenkins如何与Azure AD集成。</p><p>在本文，我将介绍腾讯云如何和Azure AD集成。</p><span id="more"></span><h2 id="第一步：在Azure中创建应用"><a href="#第一步：在Azure中创建应用" class="headerlink" title="第一步：在Azure中创建应用"></a>第一步：在Azure中创建应用</h2><h3 id="1-在企业应用中创建一个新的应用"><a href="#1-在企业应用中创建一个新的应用" class="headerlink" title="1. 在企业应用中创建一个新的应用"></a>1. 在企业应用中创建一个新的应用</h3><p>在Azure Active Directory中找到Enterprise applications(企业应用)创建一个新的应用，参考下图，在本文中将会使用Tencent Cloud SSO作为应用名称。</p><img src="azure-ad-01.png" width="80%"><h3 id="2-配置SSO"><a href="#2-配置SSO" class="headerlink" title="2. 配置SSO"></a>2. 配置SSO</h3><p>完成创建之后，进入应用之后，按照下图创建基于SAML的SSO。</p><img src="azure-ad-02.png" width="80%"><p>需要配置的内容下图，总共五部分<br><img src="azure-ad-03.png" width="80%"></p><p>我们需要配置的主要是前两个部分。</p><h4 id="基础配置"><a href="#基础配置" class="headerlink" title="基础配置"></a>基础配置</h4><p>参考下图进行设置，标识符（实体 ID）和回复 URL（断言使用者服务 URL）参考下表<br><img src="azure-ad-04.png" width="80%"></p><table><thead><tr><th align="left">所在站点</th><th align="left">标识符（实体 ID）</th><th align="left">回复 URL（断言使用者服务 URL）</th></tr></thead><tbody><tr><td align="left">中国站</td><td align="left">cloud.tencent.com</td><td align="left"><a href="https://cloud.tencent.com/login/saml">https://cloud.tencent.com/login/saml</a></td></tr><tr><td align="left">国际站</td><td align="left">intl.cloud.tencent.com</td><td align="left"><a href="https://intl.cloud.tencent.com/login/saml">https://intl.cloud.tencent.com/login/saml</a></td></tr></tbody></table><h4 id="属性和声明"><a href="#属性和声明" class="headerlink" title="属性和声明"></a>属性和声明</h4><p>在配置中，主要增加了下图中标出的两条配置。</p><img src="azure-ad-05.png" width="80%"><table><thead><tr><th align="left">Name(名称)</th><th align="left">Namespace(命名空间)</th><th align="left">Source(来源)</th><th align="left">Source attribute(来源属性)</th></tr></thead><tbody><tr><td align="left">Role</td><td align="left"><a href="https://cloud.tencent.com/SAML/Attributes">https://cloud.tencent.com/SAML/Attributes</a></td><td align="left">Attribute</td><td align="left">user.assignedroles</td></tr><tr><td align="left">RoleSessionName</td><td align="left"><a href="https://cloud.tencent.com/SAML/Attributes">https://cloud.tencent.com/SAML/Attributes</a></td><td align="left">Attribute</td><td align="left">user.userprincipalname</td></tr></tbody></table><p>添加过程如下：</p><img src="azure-ad-06.png" width="80%"><img src="azure-ad-07.png" width="80%"><img src="azure-ad-08.png" width="80%"><h4 id="下载元数据文件"><a href="#下载元数据文件" class="headerlink" title="下载元数据文件"></a>下载元数据文件</h4><p>在第三部分中下载元数据文件。<br><img src="azure-ad-09.png" width="80%"></p><h2 id="第二步：在腾讯云中创建角色SSO"><a href="#第二步：在腾讯云中创建角色SSO" class="headerlink" title="第二步：在腾讯云中创建角色SSO"></a>第二步：在腾讯云中创建角色SSO</h2><h3 id="1-创建角色SSO"><a href="#1-创建角色SSO" class="headerlink" title="1. 创建角色SSO"></a>1. 创建角色SSO</h3><p>在访问管理-&gt;身份提供商-&gt;角色SSO中新建一个提供商。</p><img src="tencent-01.png" width="80%">参考下图创建一个新的提供商， 其中元数据文档为Azure AD中下载的元数据文件。<img src="tencent-02.png" width="80%"><p>打开创建完成的提供商，将登录链接保存下来。</p><h3 id="2-创建角色"><a href="#2-创建角色" class="headerlink" title="2. 创建角色"></a>2. 创建角色</h3><p>在访问管理-&gt;角色中新建角色，可以根据需求创建一个或者多个角色。在本文中，创建了两个角色，具备管理员权限的Administrator和只读权限的ReadOnly。</p><p>创建角色的过程如下：<br>点击“新建角色”后，在弹出框中选择“身份提供商”<br><img src="tencent-03.png" width="80%"><br>身份提供商类型选择SAML，身份提供商选择之前创建的身份提供商，在本文中为aad<br><img src="tencent-04.png" width="80%"><br>角色策略可以根据角色需求设置，比如现在创建的是Administrator，因此选中了AdministratorAccess<br><img src="tencent-05.png" width="80%"><br>然后下一步配置角色标签，根据需求自行添加。在审阅中设置角色名称。<br><img src="tencent-06.png" width="80%"><br>完成之后会自动跳转会角色列表，在角色列表中找到刚刚创建的角色并打开。参考下图找到两个重要信息：RoleArn和ProviderArn<br><img src="tencent-07.png" width="80%"></p><h2 id="第三步：在Azure-AD中添加角色"><a href="#第三步：在Azure-AD中添加角色" class="headerlink" title="第三步：在Azure AD中添加角色"></a>第三步：在Azure AD中添加角色</h2><h3 id="添加角色"><a href="#添加角色" class="headerlink" title="添加角色"></a>添加角色</h3><p>返回Azure Portal页面，在在Azure Active Directory -&gt; App registrations（应用注册）中选择All Applications，然后找到与企业应用同名的应用并打开，如下图。</p><img src="azure-ad-10.png" width="80%"><p>在Manifest中修改<code>appRoles</code>, 添加新的Role如下图所示。<br><img src="azure-ad-11.png" width="80%"></p><p>内容可参考如下设置</p><figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">    <span class="attr">&quot;allowedMemberTypes&quot;</span>: [</span><br><span class="line">        <span class="string">&quot;User&quot;</span></span><br><span class="line">    ],</span><br><span class="line">    <span class="attr">&quot;description&quot;</span>: <span class="string">&quot;Administrator&quot;</span>,</span><br><span class="line">    <span class="attr">&quot;displayName&quot;</span>: <span class="string">&quot;[Root]Administrator&quot;</span>,</span><br><span class="line">    <span class="attr">&quot;id&quot;</span>: <span class="string">&quot;xxxx&quot;</span>,</span><br><span class="line">    <span class="attr">&quot;isEnabled&quot;</span>: <span class="literal">true</span>,</span><br><span class="line">    <span class="attr">&quot;lang&quot;</span>: <span class="literal">null</span>,</span><br><span class="line">    <span class="attr">&quot;origin&quot;</span>: <span class="string">&quot;Application&quot;</span>,</span><br><span class="line">    <span class="attr">&quot;value&quot;</span>: <span class="string">&quot;qcs::cam::uin/xxxxx:roleName/Administrator,qcs::cam::uin/xxxxx:saml-provider/aad&quot;</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure><p>需要注意的是：</p><ul><li>id是uuid，可以自行生成</li><li>value的格式是<code>RoleArn,ProviderArn</code></li></ul><h3 id="给AD用户-用户组分配角色"><a href="#给AD用户-用户组分配角色" class="headerlink" title="给AD用户/用户组分配角色"></a>给AD用户/用户组分配角色</h3><p>返回到创建的企业应用中，找到“用户和组”，根据需求添加用户和组即可。<br><img src="azure-ad-12.png" width="80%"></p><h2 id="第四步：测试"><a href="#第四步：测试" class="headerlink" title="第四步：测试"></a>第四步：测试</h2><p>打开角色SSO中的登录链接，得到如下界面。</p><img src="tencent-08.png" width="80%">]]></content>
+    
+    
+    <summary type="html">&lt;p&gt;在之前的博客《利用Azure AD实现Homelab环境中应用的统一认证和授权》中，我们详细讨论了如何使用Azure AD来实现统一认证。而在《Jenkins集成Azure AD》中，我们详细介绍了自托管的Jenkins如何与Azure AD集成。&lt;/p&gt;
+&lt;p&gt;在本文，我将介绍腾讯云如何和Azure AD集成。&lt;/p&gt;</summary>
+    
+    
+    
+    <category term="Cloud Computing" scheme="https://chengqing.dev/categories/Cloud-Computing/"/>
+    
+    <category term="Homelab" scheme="https://chengqing.dev/categories/Homelab/"/>
+    
+    <category term="Public Cloud Provider" scheme="https://chengqing.dev/categories/Cloud-Computing/Public-Cloud-Provider/"/>
+    
+    <category term="Azure" scheme="https://chengqing.dev/categories/Cloud-Computing/Public-Cloud-Provider/Azure/"/>
+    
+    <category term="Tencent Cloud" scheme="https://chengqing.dev/categories/Cloud-Computing/Public-Cloud-Provider/Tencent-Cloud/"/>
+    
+    
+    <category term="Homelab" scheme="https://chengqing.dev/tags/Homelab/"/>
+    
+    <category term="Azure Active Directory" scheme="https://chengqing.dev/tags/Azure-Active-Directory/"/>
+    
+    <category term="Tencent Cloud" scheme="https://chengqing.dev/tags/Tencent-Cloud/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>Jenkins 集成 Azure AD</title>
+    <link href="https://chengqing.dev/2022/07/23/jenkins-deployment-and-integrate-with-aad/"/>
+    <id>https://chengqing.dev/2022/07/23/jenkins-deployment-and-integrate-with-aad/</id>
+    <published>2022-07-23T15:07:54.000Z</published>
+    <updated>2022-07-23T15:07:54.000Z</updated>
+    
+    <content type="html"><![CDATA[<p>在<a href="/2022/07/13/homelab-unified-authorization-authentication-1/">《利用Azure AD实现Homelab环境中应用的统一认证和授权》</a>中，我介绍了当前我是如何实现统一认证和授权。这一篇博客中，我将介绍Jenkins如何和Azure AD集成。</p><span id="more"></span><p>Jenkins等这一类的应用，我会选在部署在k8s集群上，主要原因如下：</p><ul><li>减少维护成本。比如升级Jenkins，我只需要修改helm，然后部署就行。</li><li>Agent可以在k8s集群中自动伸缩，不需要我再次配置。</li></ul><h2 id="部署"><a href="#部署" class="headerlink" title="部署"></a>部署</h2><p>为了保持环境干净，我会重新创建一个 <code>namespace</code>，并把Jenkins部署到该<code>namespace</code>之中。</p><p>使用如下命令创建 <code>namespace</code>，</p><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">kubectl create ns jenkins-lab</span><br></pre></td></tr></table></figure><p><strong>注意：</strong> 我使用了命令式命令（Imperative commands）创建 <code>namespace</code>, 这种方式不推荐在生产环境使用。具体参考<a href="https://kubernetes.io/docs/concepts/overview/working-with-objects/object-management/">Kubernetes Object Management</a>.</p><p>推荐使用helm部署Jenkins，Jenkins官方也提供了chart。</p><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">helm repo add jenkins https:&#x2F;&#x2F;charts.jenkins.io</span><br><span class="line">helm upgrade -i jenkins jenkins&#x2F;jenkins \</span><br><span class="line">  --namespace jenkins-lab \</span><br><span class="line">  --values values.yaml \</span><br><span class="line">  --timeout 10m --wait</span><br></pre></td></tr></table></figure><p>需要提供自定义一下<code>values</code>文件，这次部署过程中，我会使用如下配置：</p><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line">controller:</span><br><span class="line">  installLatestSpecifiedPlugins: true</span><br><span class="line">  overwritePlugins: true</span><br><span class="line">  installPlugins:</span><br><span class="line">    - kubernetes</span><br><span class="line">    - workflow-aggregator</span><br><span class="line">    - git</span><br><span class="line">    - configuration-as-code</span><br><span class="line">  additionalPlugins:</span><br><span class="line">    - azure-ad</span><br><span class="line">  ingress:</span><br><span class="line">    enabled: true</span><br><span class="line">    annotations:</span><br><span class="line">      cert-manager.io&#x2F;cluster-issuer: route53</span><br><span class="line">    hostName: jenkins-lab.xxxx.com</span><br><span class="line">    tls:</span><br><span class="line">     - hosts:</span><br><span class="line">       - jenkins-lab.xxxx.com</span><br><span class="line">       secretName: jenkins-lab-xxx-com</span><br><span class="line">  prometheus:</span><br><span class="line">    enabled: true</span><br><span class="line">  size: &quot;20Gi&quot;</span><br></pre></td></tr></table></figure><p>需要注意的是，因为AAD App的reply url需要安全的通信方式，此处即Https。我配置了一个带用tls的ingress，之后会写一篇博客介绍如何自动申请SSL证书。</p><p>如果你需要更多的自定义配置，可以参考<a href="https://github.com/jenkinsci/helm-charts/blob/main/charts/jenkins/values.yaml">Jenkins Chart默认的values.yaml</a>。</p><p>到这里Jenkins部署完成，下一步注册AAD应用。</p><h2 id="注册Azure-AD应用"><a href="#注册Azure-AD应用" class="headerlink" title="注册Azure AD应用"></a>注册Azure AD应用</h2><p>注册Azure AD应用可以使用如下方式：</p><ul><li>通过<a href="https://aad.portal.azure.com/">Azure AD Portal</a>或者<a href="https://portal.azure.com/">Azure Portal</a>注册。</li><li>通过Azure CLI注册。</li></ul><p>通过web页面注册，交互比较容易，但是过程很难自动化，也没啥意思。因此我将采用CLI的方式，之后可以将其自动化。</p><p>注册一个名为 <code>jenkins-lab</code>的AAD应用</p><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">appName&#x3D;&quot;jenkins-lab&quot;</span><br><span class="line">az ad app create --display-name $appName \</span><br><span class="line">  --sign-in-audience AzureADMyOrg \</span><br><span class="line">  --enable-access-token-issuance true \</span><br><span class="line">  --enable-id-token-issuance true \</span><br><span class="line">  --web-home-page-url https:&#x2F;&#x2F;jenkins-lab.xxxx.com \</span><br><span class="line">  --web-redirect-uris https:&#x2F;&#x2F;jenkins-lab.xxxx.com&#x2F;securityRealm&#x2F;finishLogin</span><br></pre></td></tr></table></figure><p><strong>此处有坑：</strong> 查询Azure CLI的官网和使用<code>azure --help</code>的结果可能有较大区别。建议直接使用 <code>--help</code>获取帮助信息。</p><p>因为要使用的Group进行权限管理，因此需要将<code>groupMembershipClaims</code>改为<code>SecurityGroup</code>。</p><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">appId&#x3D;$(az ad app list --display-name $appName | jq -r -c &quot;.[0].appId&quot;)</span><br><span class="line">az ad app update --id $appId --set groupMembershipClaims&#x3D;SecurityGroup</span><br></pre></td></tr></table></figure><p>接下来，需要AAD应用授予<code>User.Read.All</code>, <code>Group.Read.All</code>, <code>People.Read.All</code>应用权限，使用如下命令：</p><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">microsoftGraphAppId&#x3D;$(az ad sp list --query &quot;[?appDisplayName&#x3D;&#x3D;&#39;Microsoft Graph&#39;].appId&quot; --all | jq -r -c &quot;.[]&quot;)</span><br><span class="line">permissions&#x3D;($(az ad sp show --id $microsoftGraphAppId | jq -r &#39;[.appRoles[] | select(.value &#x3D;&#x3D; (&quot;User.Read.All&quot;, &quot;Group.Read.All&quot;, &quot;People.Read.All&quot;)) | &quot;\(.id)&#x3D;Role&quot; ] | join(&quot; &quot;)&#39;))</span><br><span class="line">az ad app permission add --id $appId --api $microsoftGraphAppId --api-permissions $permissions</span><br><span class="line">az ad app permission admin-consent --id $appId</span><br></pre></td></tr></table></figure><h2 id="Jenkins集成AAD"><a href="#Jenkins集成AAD" class="headerlink" title="Jenkins集成AAD"></a>Jenkins集成AAD</h2><p>第一步： 登录Jenkins，默认用户名为<code>admin</code>，密码使用下面的命令查询：</p><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">kubectl exec --namespace jenkins-lab -it svc&#x2F;jenkins -c jenkins -- &#x2F;bin&#x2F;cat &#x2F;run&#x2F;secrets&#x2F;chart-admin-password &amp;&amp; echo</span><br></pre></td></tr></table></figure><p>第二步： 进入<code>Manage Jenkins</code> -&gt; <code>Security</code> -&gt; <code>Configure Global Security</code></p><p>第三步： 执行下面的命令，获取Azure AD应用的密钥。</p><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">az ad app credential reset --id $appId</span><br></pre></td></tr></table></figure><p>得到如下结果，</p><img src="aad-app-credential.png" width="80%"><p>该密钥有效时长为1年</p><p>第四步： 配置<code>Security Realm</code> 并保存</p><img src="jenkins-aad-config.png" width="80%"><p>Client ID：使用第三步返回的结果中的<code>appId</code></p><p>Client Secret：使用第三步返回的结果中的<code>password</code></p><p>Tenant: 使用第三步返回的结果中的<code>tenant</code></p><p>第五步： 保存之后，注销登录</p><p>第六步： 重新进入Jenkins，会自动跳转到Microsoft登录页面。</p><p>第七步： 配置权限，并保存</p><img src="jenkins-authorization.png" width="80%"><p>在<code>Start typing a name</code>处，输入用户名或者组名，然后添加，授予合适的权限。</p><h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>在集成的过程中仍然有大量的手动工作，之后计划使用<code>JCasC</code>改进，为什么现在不用？因为之前尝试过，没有成功。</p>]]></content>
+    
+    
+    <summary type="html">&lt;p&gt;在&lt;a href=&quot;/2022/07/13/homelab-unified-authorization-authentication-1/&quot;&gt;《利用Azure AD实现Homelab环境中应用的统一认证和授权》&lt;/a&gt;中，我介绍了当前我是如何实现统一认证和授权。这一篇博客中，我将介绍Jenkins如何和Azure AD集成。&lt;/p&gt;</summary>
+    
+    
+    
+    <category term="DevOps" scheme="https://chengqing.dev/categories/DevOps/"/>
+    
+    <category term="Cloud Computing" scheme="https://chengqing.dev/categories/Cloud-Computing/"/>
+    
+    <category term="Homelab" scheme="https://chengqing.dev/categories/Homelab/"/>
+    
+    <category term="Public Cloud Provider" scheme="https://chengqing.dev/categories/Cloud-Computing/Public-Cloud-Provider/"/>
+    
+    <category term="Jenkins" scheme="https://chengqing.dev/categories/DevOps/Jenkins/"/>
+    
+    <category term="Azure" scheme="https://chengqing.dev/categories/Cloud-Computing/Public-Cloud-Provider/Azure/"/>
+    
+    
+    <category term="Homelab" scheme="https://chengqing.dev/tags/Homelab/"/>
+    
+    <category term="Azure Active Directory" scheme="https://chengqing.dev/tags/Azure-Active-Directory/"/>
+    
+    <category term="Jenkins" scheme="https://chengqing.dev/tags/Jenkins/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>利用Azure AD实现Homelab环境中应用的统一认证和授权</title>
+    <link href="https://chengqing.dev/2022/07/13/homelab-unified-authorization-authentication-1/"/>
+    <id>https://chengqing.dev/2022/07/13/homelab-unified-authorization-authentication-1/</id>
+    <published>2022-07-13T13:07:19.000Z</published>
+    <updated>2022-07-13T13:07:19.000Z</updated>
+    
+    <content type="html"><![CDATA[<p>在我的Homelab中搭建了很多服务，比如NAS, Jenkins, Gitlab, SonarQube, Grafana等，如果每一个应用都使用独立的认证授权，我将面对如下问题：</p><ul><li>需要设置多个密码。</li><li>如果设置定期更改策略，就意味着需要定期更改多个应用的用户密码。</li><li>当添加一个用户到我的homelab环境的时候，需要在多个应用中添加用户，过程比较繁琐。</li><li>当一个用户的角色发生改变时。需要在多个应用中进行更改。</li></ul><p>我采用的解决方案是：Azure AD + Windows Server AD</p><span id="more"></span><h2 id="Azure-Active-Directory"><a href="#Azure-Active-Directory" class="headerlink" title="Azure Active Directory"></a><strong><strong>Azure Active Directory</strong></strong></h2><p>Azure Active Directory，简称Azure AD或者AAD，是一种基于云的标识和访问管理服务。 此服务可帮助员工访问外部资源，例如 Microsoft 365、Azure 门户和数以千计的其他 SaaS 应用程序。</p><h3 id="功能"><a href="#功能" class="headerlink" title="功能"></a>功能</h3><ul><li>Azure Active Directory Free。跨 Azure、Microsoft 365 和许多常用 SaaS 应用程序提供用户和组管理、本地目录同步、基本报告、云用户的自助密码更改以及单一登录。</li><li>Azure Active Directory Premium P1。 除了免费版功能，P1 还允许混合用户访问本地资源和云资源。 它还支持高级管理，例如动态组、自助服务组管理、Microsoft Identity Manager 以及允许本地用户进行自助密码重置的云写回功能。</li><li>Azure Active Directory Premium P2<strong>。</strong> 除了免费版和 P1 版功能，P2 还提供 <a href="https://docs.microsoft.com/zh-cn/azure/active-directory/identity-protection/overview-identity-protection">Azure Active Directory 标识保护</a>，可帮助对应用和重要的公司数据提供基于风险的条件访问，以及提供 <a href="https://docs.microsoft.com/zh-cn/azure/active-directory/privileged-identity-management/pim-getting-started">Privileged Identity Management</a>以便发现、限制和监视管理员及其对资源的访问，并在需要时提供实时访问。</li></ul><p>该部分内容来自其技术文档，更多内容请访问<a href="https://docs.microsoft.com/zh-cn/azure/active-directory/fundamentals/active-directory-whatis">什么是 Azure Active Directory？</a></p><h3 id="如何获取"><a href="#如何获取" class="headerlink" title="如何获取"></a>如何获取</h3><p>获取Azure Active Directory的方法有两种：</p><p>方法一：注册Azure账号即可使用Azure Active Directory Free版本。该方法是最简单，也是长期可用的。但是部分功能无法使用，比如使用本地写回进行自助式密码重置/更改/解锁。</p><p>方法二：通过<strong><strong>Microsoft 365 Developer Program</strong></strong>获取Azure AD Premium P2。该方式可以解锁所有Azure AD功能，但是通过该方式申请到Microsoft 365 E5订阅有效期只有120天，之后微软会根据规则决定是否自动续期。目前，可以在网上找到如何自动续期的方案。</p><h2 id="Active-Directory-Domain-Service"><a href="#Active-Directory-Domain-Service" class="headerlink" title="Active Directory Domain Service"></a>Active Directory Domain Service</h2><p>Active Directory 存储有关网络上对象的信息，并使管理员和用户可以轻松查找和使用这些信息。 Active Directory 使用结构化数据存储作为目录信息的逻辑分层组织的基础。</p><h3 id="如何获取AD"><a href="#如何获取AD" class="headerlink" title="如何获取AD"></a>如何获取AD</h3><p>获取AD有两种方式：</p><p>方法一，使用Azure Active Directory Domain Services。对于个人用户而言，价格有点高，比如在East Asia一个月至少需要109美元。其好处也是不言而喻的，可靠性是有保障的。</p><p>方法二，在本地Windows Server上安装AD。与我而言，我会选择这种方案，因为其成本相对而言会低很多，可靠性的优先级并不是很高。</p><h3 id="Windows-AD-和Azure-AD之间的同步"><a href="#Windows-AD-和Azure-AD之间的同步" class="headerlink" title="Windows AD 和Azure AD之间的同步"></a>Windows AD 和Azure AD之间的同步</h3><p>Azure 提供了现成的工具，只需要在Windows Server上安装Azure AD Connect sync。详细内容可以参考：<a href="https://docs.microsoft.com/en-us/azure/active-directory/hybrid/how-to-connect-sync-whatis">https://docs.microsoft.com/en-us/azure/active-directory/hybrid/how-to-connect-sync-whatis</a></p><p>如果AAD的license是P1或者P2，可以开启密码回写，这样就可以通过微软提供的服务进行密码修改。可以参考： <a href="https://docs.microsoft.com/en-us/azure/active-directory/hybrid/how-to-connect-password-hash-synchronization">https://docs.microsoft.com/en-us/azure/active-directory/hybrid/how-to-connect-password-hash-synchronization</a></p><p>如果只是free license，还想通过web页面修改密码，需要借助Remote Desktop Services来实现，可以参考：<a href="https://www.devopsage.com/how-to-setup-web-page-to-change-users-password/">https://www.devopsage.com/how-to-setup-web-page-to-change-users-password/</a></p><h3 id="如何管理用户和用户组"><a href="#如何管理用户和用户组" class="headerlink" title="如何管理用户和用户组"></a>如何管理用户和用户组</h3><p>我采用的方案如下：</p><ul><li>在Windows Server AD上维护用户组，之后用户组会自动同步到AAD上。</li><li>在Windows Server AD上维护用户，之后用户组会自动同步到AAD上。</li><li>根据使用场景创建用户组。以Jenkins为例，我将用户分为两类：Admin和User，Admin可以管理Jenkins的系统配置，User只能使用Jenkins，因此我会建立两个用户组：JenkinsAdmin 和 JenkinsUser。使用AAD实现SSO，最终根据用户组分配权限。</li></ul><h2 id="利用Azure-AD实现应用SSO"><a href="#利用Azure-AD实现应用SSO" class="headerlink" title="利用Azure AD实现应用SSO"></a>利用Azure AD实现应用SSO</h2><p>Azure AD可以与很多种身份验证和同步协议集成。通过身份验证集成，只需对使用旧式身份验证方法的应用程序进行少量更改（或无需更改），即可使用 Azure AD 及其安全和管理功能。 利用同步集成，可以将用户和组数据同步到 Azure AD，然后使用用户 Azure AD 管理功能。 某些同步模式还支持自动预配。</p><p>支持的旧式身份验证方式：</p><ul><li>基于标头的身份验证（Header-based authentication）</li><li>LDAP身份验证（LDAP authentication）</li><li>OAuth 2.0身份验证（OAuth 2.0 authentication）</li><li>OIDC身份验证（OIDC authentication）</li><li>基于密码的SSO身份验证（Password based SSO authentication）</li><li>RADIUS 身份验证（RADIUS authentication）</li><li>远程桌面网关服务（Remote Desktop Gateway services）</li><li>Secure Shell (SSH)</li><li>SAML 身份认证（SAML authentication）</li><li>Windows身份认证（Windows Authentication - Kerberos Constrained Delegation）</li></ul><p>支持的同步模式</p><ul><li>目录同步：从本地 Active Directory 环境同步到 Azure AD</li><li>LDAP同步</li><li>SCIM同步</li></ul><p>更多详细的内容可以看<a href="https://docs.microsoft.com/zh-cn/azure/active-directory/fundamentals/auth-sync-overview">Azure Active Directory 身份验证和同步协议概述 - Microsoft Entra | Microsoft Docs</a>，毕竟是官方文档。</p><h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>用一张图总结一下。在我的Homelab环境中，AD之间的同步，以及用户如何使用Azure AD登录到Jenkins上。</p><img src="azure-ad-sso.png" width="80%"><p>接下来我会分享几篇实践性的博客，讲讲Azure AD与Synology NAS, Jenkins, Gitlab等的集成。</p>]]></content>
+    
+    
+    <summary type="html">&lt;p&gt;在我的Homelab中搭建了很多服务，比如NAS, Jenkins, Gitlab, SonarQube, Grafana等，如果每一个应用都使用独立的认证授权，我将面对如下问题：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;需要设置多个密码。&lt;/li&gt;
+&lt;li&gt;如果设置定期更改策略，就意味着需要定期更改多个应用的用户密码。&lt;/li&gt;
+&lt;li&gt;当添加一个用户到我的homelab环境的时候，需要在多个应用中添加用户，过程比较繁琐。&lt;/li&gt;
+&lt;li&gt;当一个用户的角色发生改变时。需要在多个应用中进行更改。&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;我采用的解决方案是：Azure AD + Windows Server AD&lt;/p&gt;</summary>
+    
+    
+    
+    <category term="DevOps" scheme="https://chengqing.dev/categories/DevOps/"/>
+    
+    <category term="Cloud Computing" scheme="https://chengqing.dev/categories/Cloud-Computing/"/>
+    
+    <category term="Homelab" scheme="https://chengqing.dev/categories/Homelab/"/>
+    
+    <category term="Public Cloud Provider" scheme="https://chengqing.dev/categories/Cloud-Computing/Public-Cloud-Provider/"/>
+    
+    <category term="Azure" scheme="https://chengqing.dev/categories/Cloud-Computing/Public-Cloud-Provider/Azure/"/>
+    
+    
+    <category term="Homelab" scheme="https://chengqing.dev/tags/Homelab/"/>
+    
+    <category term="Authorization" scheme="https://chengqing.dev/tags/Authorization/"/>
+    
+    <category term="Authentication" scheme="https://chengqing.dev/tags/Authentication/"/>
+    
+    <category term="SSO" scheme="https://chengqing.dev/tags/SSO/"/>
+    
+    <category term="Azure" scheme="https://chengqing.dev/tags/Azure/"/>
+    
+    <category term="Azure Active Directory" scheme="https://chengqing.dev/tags/Azure-Active-Directory/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>如何写README</title>
+    <link href="https://chengqing.dev/2022/06/28/how-to-write-readme/"/>
+    <id>https://chengqing.dev/2022/06/28/how-to-write-readme/</id>
+    <published>2022-06-28T13:00:00.000Z</published>
+    <updated>2022-06-28T13:00:00.000Z</updated>
+    
+    <content type="html"><![CDATA[<p>在代码项目根目录里，我们会经常看见README.md。README是什么？它是项目的自我介绍，类似于你的简历，都是用来销售自己的，让公司雇佣你，让别人采纳你的项目。</p><p>在本文中，我将尝试着为介绍一下如何写README。</p><span id="more"></span><p>写README可以按照5W1H(what, why, when, how, where, who)的思路去写，主要还是使用What, Why, How, Who。</p><h2 id="What"><a href="#What" class="headerlink" title="What"></a>What</h2><p><strong>What</strong> 主要是以下两方面：</p><ul><li>是什么？</li><li>能干什么？（提供了什么功能）</li></ul><p>比如在 <a href="https://github.com/kubernetes/kubernetes">Kubernetes</a>  的README中，</p><blockquote><p>Kubernetes, also known as K8s, is an open source system for managing containerized applications across multiple hosts. It provides basic mechanisms for deployment, maintenance, and scaling of applications.</p></blockquote><p>通过这段话，我们知道了如下信息：</p><ul><li>Kubernetes, also known as K8s, is an open source system for managing containerized applications across multiple hosts.（<strong>是什么</strong>）</li><li>It provides basic mechanisms for deployment, maintenance, and scaling of applications.（<strong>能干什么？</strong>）</li></ul><p>除了<strong>是什么</strong>和<strong>能干什么</strong>，还可能会有起源，License等</p><h2 id="Why"><a href="#Why" class="headerlink" title="Why"></a>Why</h2><p><strong>Why</strong> 主要是说明<strong>动机:</strong></p><ul><li>为什么做？</li><li>解决了什么问题？</li><li>带来了哪些好处（benefits）？</li></ul><p>比如在<a href="https://github.com/hashicorp/vault">Hashicorp Vault</a> 中，</p><blockquote><p>A modern system requires access to a multitude of secrets: database credentials, API keys for external services, credentials for service-oriented architecture communication, etc. Understanding who is accessing what secrets is already very difficult and platform-specific. Adding on key rolling, secure storage, and detailed audit logs is almost impossible without a custom solution. This is where Vault steps in.</p></blockquote><p>第一句话介绍了背景，第二句话说明在该背景之下，所面对的困难。最后一句告诉大家Vault这个工具就是解决这些问题的。</p><p>关于带来了哪些好处，这部分通常而言是和What中能干什么（功能）有重合的。</p><h2 id="Who"><a href="#Who" class="headerlink" title="Who"></a>Who</h2><p><strong>Who</strong> 有如下内容：</p><ul><li>谁维护该项目？</li><li>有哪些贡献者？</li><li>沟通方式。比如slack channel。</li></ul><p>关于<strong>谁维护该项目</strong>，在开源项目中会默认是社区或者repo的拥有者维护。但是在内部项目，随着人员的流动，还是很有必要注明该项目当前是谁/哪个团队负责维护的。</p><p>有哪些贡献者，在开源项目中经常会在README中看见很多提交代码人的头像，这样可以激励大家去提交代码。</p><p>比如在<a href="https://github.com/vuejs/vue">Vue</a>中Contribution部分就做了这件事情。</p><p>沟通方式和下面的部分内容有一定的重复，提供一个或者多个平台，发布信息，让大家交流，提供反馈等。</p><h2 id="How"><a href="#How" class="headerlink" title="How"></a>How</h2><p>这部分重点关注两类人：使用者和开发者。</p><p>使用者，也就是用户。对于用户，我们需要告诉用户如下内容：</p><ul><li>使用的前置条件（Prerequisite）。安装哪些依赖，需要什么credentials等等。比如我写一个docker-compose文件用来在本地运行Jenkins，那么我的前置条件就是：docker和docker-compose已经安装在本地了。</li><li>如何安装？个人建议：提供一个脚本实现一键安装，这样可以降低用户使用门槛。</li><li>如何使用？</li><li>如何卸载？这部分内容是绝大数项目所缺少的，本来的我只是想尝试一下，结果我安装之后就无法卸载了，这也是一件很蛋疼的事情。</li><li>如何提供反馈？用户在使用过程中，出现了bug，用户在哪里反馈这个bug。通常情况下，用户可以提issue，可以不写。如果不是，应当写出来。</li></ul><p>这部分内容通常会集中在Documentation或者Getting Started这一类的标题之下。</p><p>比如在<a href="https://github.com/hashicorp/vault#documentation-getting-started-and-certification-exams">Hashicorp Vault</a> 中，Documentation, Getting Started, and Certification Exams就是用来告诉用户如何使用。</p><p>再比如在<a href="https://github.com/vuejs/vue">Vue</a>中，Documentation就是指向一些案例和文档，Issues就是告诉用户遇到问题如何创建一个issue。</p><p>开发者，可能对你项目感兴趣的人，想在你的基础上添加一些功能，或者发现了bug帮助你修复。我们需要提供给开发者Contributing Guide，包含如下内容：</p><ul><li>技术栈。可以考虑使用badge来标示关键依赖。badge可以参考<a href="https://shields.io/">https://shields.io/</a></li><li>Code of Conduct</li><li>CI/CD 状态。建议使用badge。</li><li>如何执行测试？</li><li>如何执行代码风格检查?</li><li>如何构建（build）?</li><li>如何提交代码？如果涉及多分支，说明不同分支的用途。</li></ul><p>以上的每一项不一定都需要，以上的内容也不是全部内容。通常这部分内容会出现在Development，contribution等这一类的标题之下。</p><p>比如在<a href="https://github.com/hashicorp/vault#documentation-getting-started-and-certification-exams">Hashicorp Vault</a> 中，有一个小节Developing Vault来告诉开发者如何开发。</p><p>在<a href="https://github.com/vuejs/vue">Vue</a>中，并不是将如何贡献代码写到了contribution之下，而是将其内容放到了另外一个页面，这是非常好的做法。<strong>在写README的时候，如果某个部分内容太长了就应该将其移到另外一个文件中。保持README完整，简洁，有条理是很重要的。</strong>不要尝试着增加用户（使用者/开发者）的阅读负担。</p>]]></content>
+    
+    
+    <summary type="html">&lt;p&gt;在代码项目根目录里，我们会经常看见README.md。README是什么？它是项目的自我介绍，类似于你的简历，都是用来销售自己的，让公司雇佣你，让别人采纳你的项目。&lt;/p&gt;
+&lt;p&gt;在本文中，我将尝试着为介绍一下如何写README。&lt;/p&gt;</summary>
+    
+    
+    
+    <category term="Development" scheme="https://chengqing.dev/categories/Development/"/>
+    
+    
+    <category term="Development" scheme="https://chengqing.dev/tags/Development/"/>
+    
+    <category term="README" scheme="https://chengqing.dev/tags/README/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>新手如何学习Git</title>
+    <link href="https://chengqing.dev/2022/03/24/how-to-learning-git/"/>
+    <id>https://chengqing.dev/2022/03/24/how-to-learning-git/</id>
+    <published>2022-03-24T12:34:26.000Z</published>
+    <updated>2022-03-24T12:34:26.000Z</updated>
+    
+    <content type="html"><![CDATA[<p>版本控制记录着软件的每一次改变，每一次发布，以及每一个Bug。 它贯穿于软件的生命周期，从生到死，<strong>请慎重对待每一次提交，像记录历史一样书写提交记录</strong>。</p><p>当下最流行的Git是一个不错的选择，<strong>作为合格的软件开发人员你应该熟练的使用它</strong>。你可以构造一些场景去练习git命令，比如：</p><span id="more"></span><ul><li>在Github创建一个repo，并向其提交代码。（clone, add, commit, push）</li><li>从main分支创建一个新的分支dev，改变代码，然后通过PR的方式将代码合并到main分支。(checkout, pr, branch)</li><li>从main分支创建一个新的分支dev，改变代码提交。然后切回main分支，改变代码，提交至远端分支。再切换dev分支，将main分支的提交合并到当前分支。（练习rebase和reset）</li><li>从main分支创建一个新的分支dev, 创建7个commit，然后将他们合并为1个commit. （练习使用reset或者rebase）</li><li>从main分支创建一个新的分支dev, 创建7个commit，然后将第七个commit合并到第一个commit，抛弃第二个commit，仅修改第三个commit的commit message，仅修改第四个commit的commit author，修改第六个commit的代码。（练习rebase，以及如何整理commit message）</li><li>Fork一个repo，本地clone，修改代码。在被fork的repo主分支出现新的提交之后，将本地代码和被fork的repo同步。（练习remote, fetch, rebase）</li></ul><p>这里只列举了一些场景，你也可以根据你的需求再写一些场景用来练习。<strong>建议使用命令行练习</strong>，也建议以后的开发过程中使用命令行，最好不要使用IDE提供的UI。</p><p>当你了解了Git之后，也需要学习一下常见的git工作流：</p><ul><li>Git flow</li><li>Trunk-based</li><li>Feature branching</li><li>Forking Workflow</li></ul><p>学习资料:</p><ul><li>官方文档：<a href="https://git-scm.com/doc">Git - Documentation (git-scm.com)</a>. 官方文档已经写的很详尽了。</li><li>一本书 Pro Git: <a href="https://github.com/progit/progit2/releases/download/2.1.338/progit.pdf">https://github.com/progit/progit2/releases/download/2.1.338/progit.pdf</a></li></ul>]]></content>
+    
+    
+    <summary type="html">&lt;p&gt;版本控制记录着软件的每一次改变，每一次发布，以及每一个Bug。 它贯穿于软件的生命周期，从生到死，&lt;strong&gt;请慎重对待每一次提交，像记录历史一样书写提交记录&lt;/strong&gt;。&lt;/p&gt;
+&lt;p&gt;当下最流行的Git是一个不错的选择，&lt;strong&gt;作为合格的软件开发人员你应该熟练的使用它&lt;/strong&gt;。你可以构造一些场景去练习git命令，比如：&lt;/p&gt;</summary>
+    
+    
+    
+    <category term="DevOps" scheme="https://chengqing.dev/categories/DevOps/"/>
+    
+    <category term="Development" scheme="https://chengqing.dev/categories/Development/"/>
+    
+    
+    <category term="DevOps" scheme="https://chengqing.dev/tags/DevOps/"/>
+    
+    <category term="Git" scheme="https://chengqing.dev/tags/Git/"/>
+    
+    <category term="Version Control" scheme="https://chengqing.dev/tags/Version-Control/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>WSL开发环境搭建分享</title>
+    <link href="https://chengqing.dev/2022/01/13/wsl-development/"/>
+    <id>https://chengqing.dev/2022/01/13/wsl-development/</id>
+    <published>2022-01-13T16:00:44.000Z</published>
+    <updated>2022-07-13T14:25:44.000Z</updated>
+    
+    <content type="html"><![CDATA[<p>一篇平平无奇的WSL使用推荐指南。在本篇中，不会讨论什么是WSL，如何安装WSL，单纯地分享我是如何使用WSL进行日常开发的。</p><p>我当前是使用的WSL配置如下：</p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">NAME            STATE           VERSION</span><br><span class="line">* Ubuntu-20.04    Running         2</span><br></pre></td></tr></table></figure><p>我习惯使用大量的CLI来提升自己的工作效率以及使用体验，因此一个好用的Terminal和一系列高效率的CLI工具对我是十分重要的。</p><span id="more"></span><h2 id="WSL-配置"><a href="#WSL-配置" class="headerlink" title="WSL 配置"></a>WSL 配置</h2><p>文件的权限问题，解决方法参考<a href="https://chengqing.dev/2021/04/24/long-term-wsl/">[长期更新] WSL使用记录</a></p><p>配置git，执行下面命令之后，使用https clone的代码就不用经常输入用户名密码了。</p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git config --global credential.helper store</span><br></pre></td></tr></table></figure><p>WSL中Git的默认编辑器对于我来说不咋好用，我比较喜欢使用vim。可以使用下面的命令更改默认编辑器：</p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git config --global core.editor vim</span><br></pre></td></tr></table></figure><h2 id="CLI工具"><a href="#CLI工具" class="headerlink" title="CLI工具"></a>CLI工具</h2><h3 id="Terminal"><a href="#Terminal" class="headerlink" title="Terminal"></a>Terminal</h3><p>在Windows上面，我推荐使用 Windows Terminal （<a href="https://www.microsoft.com/store/productId/9N0DX20HK701">下载链接</a>）。推荐理由：</p><ul><li>微软官方开发维护。</li><li>可以根据自己的使用习惯定制化。</li><li>可以在WSL，PowerShell，CMD，Azure Cloud Shell之间切换。</li></ul><h3 id="Zsh"><a href="#Zsh" class="headerlink" title="Zsh"></a>Zsh</h3><p>ubuntu 里面默认提供的是Bash，不是特别适合日常使用。相较于Bash，Zsh更加适合交互，比如如下功能：</p><ul><li>无需 <code>cd</code> 也可以切换目录，在Bash需要使用 <code>cd projects</code> ，在Zsh下直接 <code>projects</code> 就行了。</li><li>扩展路径，比如输入 <code>/u/loc</code> 然后Tab，就会变成 <code>/usr/local/</code> 。</li><li>支持插件和主题。</li></ul><p>如何安装Zsh</p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo apt-get install zsh -y</span><br></pre></td></tr></table></figure><p>如果想知道更多有关Zsh的知识，请阅读<a href="https://zsh.sourceforge.io/">官方文档</a>。</p><h3 id="Oh-My-Zsh"><a href="#Oh-My-Zsh" class="headerlink" title="Oh My Zsh"></a>Oh My Zsh</h3><p>Oh My Zsh 是一个开源的管理Zsh配置的框架。在其<a href="https://github.com/ohmyzsh/ohmyzsh">GitHub</a>的Readme中有一句很有意思的话，<strong>Oh My Zsh will not make you a 10x developer…but you may feel like one.</strong></p><p>如何安装Oh My Zsh：</p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">sudo apt-get install wget -y</span><br><span class="line">sh -c <span class="string">&quot;<span class="subst">$(wget -O- https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)</span>&quot;</span></span><br></pre></td></tr></table></figure><p>我使用的是Oh My Zsh的默认主题，如果想更改主题，请阅读 <a href="https://github.com/ohmyzsh/ohmyzsh#themes">Readme</a>.</p><h3 id="Oh-My-Zsh-插件"><a href="#Oh-My-Zsh-插件" class="headerlink" title="Oh My Zsh 插件"></a>Oh My Zsh 插件</h3><p>插件是一个重头戏，利用插件可以提升我们的工作效率。</p><p><code>autojump</code> 是一个小工具，可以帮助我们快速导航到一个目录中，支持模糊匹配。比如有一个目录名称我记得其中包含了 <code>hexo</code> 而且我曾经进入过，那么我就可以使用 <code>j hexo</code> 尝试进入。<strong>强烈推荐</strong>。</p><p>安装方式：</p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo apt-get install autojump -y</span><br></pre></td></tr></table></figure><p>安装完之后，修改 <code>~/.zshrc</code></p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">plugins=(git autojump)</span><br></pre></td></tr></table></figure><p><code>git</code> 支持git的插件时oh-my-zsh 默认添加了的，提供了很多简写的别名。比如我常用的 <code>gst</code> 就是 <code>git status</code> 的别名。更多别名，请参考 <a href="https://github.com/ohmyzsh/ohmyzsh/tree/master/plugins/git">ohmyzsh/plugins/git</a>。</p><p>Oh My Zsh还支持很多插件，详情请参考<a href="https://github.com/ohmyzsh/ohmyzsh/wiki/Plugins">Plugins</a>。</p><h3 id="Homebrew"><a href="#Homebrew" class="headerlink" title="Homebrew"></a><strong>Homebrew</strong></h3><p>Homebrew 是一个包管理器。Homebrew也提供了很多有用的cli工具，我使用Homebrew 的原因是我公司配置的电脑是Macbook，在WSL中继续使用该工具，可以给我带来一致性的体验。而且Homebrew自己开发CLI工具，安装等相比于apt更加方便。</p><p>安装方式：</p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">/bin/bash -c <span class="string">&quot;<span class="subst">$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)</span>&quot;</span></span><br></pre></td></tr></table></figure><p>更多使用方式，请参考<a href="https://brew.sh/">The Missing Package Manager for macOS (or Linux) — Homebrew</a></p><h3 id="tig"><a href="#tig" class="headerlink" title="tig"></a>tig</h3><p>在使用git的过程中，本地看提交记录，或者reset的时候找起点等等情况下，如果使用 <code>git log</code> 就会很难受，tig完美地解决了这个问题，还能快速浏览每一个提交的内容等。</p><p>安装方式：</p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">sudo apt-get install tig -y</span><br><span class="line"></span><br><span class="line">or</span><br><span class="line"></span><br><span class="line">brew install tig</span><br></pre></td></tr></table></figure><h2 id="语言开发环境管理"><a href="#语言开发环境管理" class="headerlink" title="语言开发环境管理"></a>语言开发环境管理</h2><p>这里只是列举了一些，我使用过的管理工具，其它语言请自行探索。</p><table><thead><tr><th>语言</th><th>管理工具</th><th>安装方式</th><th>文档</th></tr></thead><tbody><tr><td>Java</td><td>jenv</td><td><code>brew install jenv</code></td><td><a href="https://github.com/jenv/jenv">jenv/jenv: Manage your Java environment</a></td></tr><tr><td>Node.js</td><td>nvm</td><td><code>wget -qO- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.1/install.sh | bash</code></td><td><a href="https://github.com/nvm-sh/nvm">nvm-sh/nvm: Node Version Manager - POSIX-compliant bash script to manage multiple active node.js versions</a></td></tr><tr><td>Ruby</td><td>rbenv</td><td><code>brew install rbenv</code></td><td><a href="https://github.com/rbenv/rbenv">rbenv/rbenv: Manage your app’s Ruby environment</a></td></tr><tr><td>Python</td><td>pyenv</td><td><code>brew install pyenv</code></td><td><a href="https://github.com/pyenv/pyenv">Simple Python version management (from pyenv)</a></td></tr></tbody></table><h3 id="与JetBrains-IDE集成"><a href="#与JetBrains-IDE集成" class="headerlink" title="与JetBrains IDE集成"></a>与JetBrains IDE集成</h3><p>与JetBrains IDE集成，需要做两件事情。</p><ol><li>切换Terminal，默认的是CMD。为了更好的体验，可以切换到wsl. </li></ol><p><code>Settings</code> → <code>Tools</code>  → <code>Terminal</code> , 在 <code>Application Settings</code> 中 <code>Shell path</code> 改成 <code>wsl</code> .</p><img src="wsl-terminal.png" width="80%"><ol start="2"><li>设置SDK，以 WebStorm为例。<img src="wsl-sdk.png" width="80%"></li></ol><h3 id="VS-Code"><a href="#VS-Code" class="headerlink" title="VS Code"></a>VS Code</h3><ol><li>在vscode中安装扩展插件 <code>Remote Development</code> </li><li><code>Ctrl + Shift + P</code> , 输入 <code>shell command</code> , 执行 <code>Install &#39;code&#39; command in PATH command</code></li><li>在WSL中就可以使用vscode了，比如 <code>code .</code> 在vscode中打开当前目录。</li></ol>]]></content>
+    
+    
+    <summary type="html">&lt;p&gt;一篇平平无奇的WSL使用推荐指南。在本篇中，不会讨论什么是WSL，如何安装WSL，单纯地分享我是如何使用WSL进行日常开发的。&lt;/p&gt;
+&lt;p&gt;我当前是使用的WSL配置如下：&lt;/p&gt;
+&lt;figure class=&quot;highlight bash&quot;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&quot;gutter&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;1&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;2&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;td class=&quot;code&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;NAME            STATE           VERSION&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;* Ubuntu-20.04    Running         2&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/figure&gt;
+
+&lt;p&gt;我习惯使用大量的CLI来提升自己的工作效率以及使用体验，因此一个好用的Terminal和一系列高效率的CLI工具对我是十分重要的。&lt;/p&gt;</summary>
+    
+    
+    
+    <category term="Windows" scheme="https://chengqing.dev/categories/Windows/"/>
+    
+    <category term="WSL" scheme="https://chengqing.dev/categories/Windows/WSL/"/>
+    
+    
+    <category term="wsl" scheme="https://chengqing.dev/tags/wsl/"/>
+    
+    <category term="development" scheme="https://chengqing.dev/tags/development/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>AWTRIX 显示Hexo博客阅读数量</title>
+    <link href="https://chengqing.dev/2022/01/12/awtrix-hexo-leancloud-counter/"/>
+    <id>https://chengqing.dev/2022/01/12/awtrix-hexo-leancloud-counter/</id>
+    <published>2022-01-12T13:57:25.000Z</published>
+    <updated>2022-01-12T13:57:25.000Z</updated>
+    
+    <content type="html"><![CDATA[<h2 id="为啥想写这个App"><a href="#为啥想写这个App" class="headerlink" title="为啥想写这个App"></a>为啥想写这个App</h2><p>21年的时候做桌面改造的时候，想给自己加一个时钟。看了一圈之后，最终入手了AWTRIX Pro mini。</p><p>在AWTRIX App Store中有很多有趣的App，比如GithubFollowers, Bilibili等，并且安装了GithubFollowers，一段时间之后，发现那个数字一直卡在7，尴尴尬尬，内心毫无波澜，于是卸掉。</p><p>于是就想看看自己自己博客有多少有效阅读量（每篇博客的阅读量之和）。</p><span id="more"></span><h2 id="如何实现"><a href="#如何实现" class="headerlink" title="如何实现"></a>如何实现</h2><p>这是我第一次开发AWTRIX App，我也是极其懵逼。阅读官方文档是最快捷的方法，如果有兴趣可以参考<a href="https://awtrixdocs.blueforcer.de/#/en-en/appcoding">Programming (blueforcer.de)</a></p><p>我的博客是使用Hexo搭建的，阅读计数使用的是LeanCloud。</p><p>LeanCloud是提供了API接口，文档参见 <a href="https://leancloud.cn/docs/rest_api.html">存储 REST API 使用指南 - LeanCloud 文档</a></p><h3 id="第一步：获取数据"><a href="#第一步：获取数据" class="headerlink" title="第一步：获取数据"></a>第一步：获取数据</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="function">Sub <span class="title">App_startDownload</span><span class="params">(jobNr As Int)</span></span></span><br><span class="line"><span class="function">Select jobNr</span></span><br><span class="line"><span class="function">Case 1</span></span><br><span class="line"><span class="function">App.<span class="title">Download</span><span class="params">(App.get(<span class="string">&quot;API&quot;</span>)</span>&amp;&quot;/1.1/classes/Counter&quot;)</span></span><br><span class="line"><span class="function">App.Header </span>= CreateMap(<span class="string">&quot;X-LC-Id&quot;</span>:App.get(<span class="string">&quot;AppId&quot;</span>), <span class="string">&quot;X-LC-Key&quot;</span>:App.get(<span class="string">&quot;AppKey&quot;</span>))</span><br><span class="line">End Select</span><br><span class="line">End Sub</span><br></pre></td></tr></table></figure><p>这一步需要注意的是 <code>App.get()</code> 中key的大小写，我在这里栽倒了。</p><h3 id="第二步：处理数据"><a href="#第二步：处理数据" class="headerlink" title="第二步：处理数据"></a>第二步：处理数据</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="function">Sub <span class="title">App_evalJobResponse</span><span class="params">(Resp As JobResponse)</span></span></span><br><span class="line"><span class="function">Try</span></span><br><span class="line"><span class="function">If Resp.success Then</span></span><br><span class="line"><span class="function">Select Resp.jobNr</span></span><br><span class="line"><span class="function">Case 1</span></span><br><span class="line"><span class="function">Dim parser As JSONParser</span></span><br><span class="line"><span class="function">parser.<span class="title">Initialize</span><span class="params">(Resp.ResponseString)</span></span></span><br><span class="line"><span class="function">Dim root As Map </span>= parser.NextObject</span><br><span class="line">Dim results As List = root.Get(<span class="string">&quot;results&quot;</span>)</span><br><span class="line">total_view = <span class="number">0</span></span><br><span class="line">For Each postView As Map In results</span><br><span class="line">total_view = total_view + postView.Get(<span class="string">&quot;time&quot;</span>)</span><br><span class="line">Next</span><br><span class="line">End Select</span><br><span class="line">End If</span><br><span class="line">Catch</span><br><span class="line">App.throwError(LastException)</span><br><span class="line">End Try</span><br><span class="line">End Sub</span><br></pre></td></tr></table></figure><p><code>total_view</code> 是一个全局变量，记得清零。</p><h3 id="第三步：显示输出"><a href="#第三步：显示输出" class="headerlink" title="第三步：显示输出"></a>第三步：显示输出</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">Sub App_genFrame</span><br><span class="line">App.genSimpleFrame(total_view,<span class="number">1720</span>,True,False,Null,True)</span><br><span class="line">End Sub</span><br></pre></td></tr></table></figure><p>代码详见：<a href="https://github.com/chengqing-su/awtrix-hexo-leancloud-counter">https://github.com/chengqing-su/awtrix-hexo-leancloud-counter</a></p><p>如果你需要编译号的Jar包，请自取：<a href="https://github.com/chengqing-su/awtrix-hexo-leancloud-counter/releases/download/v1.0.0/HexoLeanCloud.tar.gz">https://github.com/chengqing-su/awtrix-hexo-leancloud-counter/releases/download/v1.0.0/HexoLeanCloud.tar.gz</a></p><h2 id="体验"><a href="#体验" class="headerlink" title="体验"></a>体验</h2><p>最近几天看着数字不对地变化，感觉自己更加有动力去写博客，去维护博客。</p><img src="show.jpg" width="80%">]]></content>
+    
+    
+    <summary type="html">&lt;h2 id=&quot;为啥想写这个App&quot;&gt;&lt;a href=&quot;#为啥想写这个App&quot; class=&quot;headerlink&quot; title=&quot;为啥想写这个App&quot;&gt;&lt;/a&gt;为啥想写这个App&lt;/h2&gt;&lt;p&gt;21年的时候做桌面改造的时候，想给自己加一个时钟。看了一圈之后，最终入手了AWTRIX Pro mini。&lt;/p&gt;
+&lt;p&gt;在AWTRIX App Store中有很多有趣的App，比如GithubFollowers, Bilibili等，并且安装了GithubFollowers，一段时间之后，发现那个数字一直卡在7，尴尴尬尬，内心毫无波澜，于是卸掉。&lt;/p&gt;
+&lt;p&gt;于是就想看看自己自己博客有多少有效阅读量（每篇博客的阅读量之和）。&lt;/p&gt;</summary>
+    
+    
+    
+    <category term="Homelab" scheme="https://chengqing.dev/categories/Homelab/"/>
+    
+    
+    <category term="Homelab" scheme="https://chengqing.dev/tags/Homelab/"/>
+    
+    <category term="AWTRIX" scheme="https://chengqing.dev/tags/AWTRIX/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>版本控制</title>
+    <link href="https://chengqing.dev/2022/01/05/version-control/"/>
+    <id>https://chengqing.dev/2022/01/05/version-control/</id>
+    <published>2022-01-05T15:32:30.000Z</published>
+    <updated>2022-01-05T15:32:30.000Z</updated>
+    
+    <content type="html"><![CDATA[<p>本文将聊一聊版本控制和版本控制系统。</p><span id="more"></span><h2 id="版本控制"><a href="#版本控制" class="headerlink" title="版本控制"></a>版本控制</h2><p>在大学的期间，我们会以团队的方式完成一项大作业，比如写一个小编译器，基本上大作业都会要求写一份报告。</p><p>团队成员：A、B、C、D</p><p>报告结构：介绍、原理分析、设计、实现、总结和展望</p><p>分工：</p><p>A：完成介绍、总结和展望两部分，合并报告</p><p>B：完成原理分析部分</p><p>C：完成设计部分</p><p>D：完成实现部分</p><img src="version-control-1.drawio.svg" width="50%"><p>为了统一风格，比如标题字体、正文字体，以及大家各自完成各自的部分不用等待别人，因此我们会先做一个模版。之后A、B、C、D都会基于改模版去填充各自的内容。这时候我们就有了一个Word文件，我们姑且取名为 <code>homework-v0.docx</code>.</p><p>当B在开始写<em>原理分析</em>的时候，他需要先从A那边拿到， 然后复制一份<code>homework-v0.docx</code>并命名为<code>homework-v0.1.docx</code>。在新文件中开始自己的工作，写完之后保存。检查一遍之后，他发现有些小问题要改一下，因此复制<code>homework-v0.1.docx</code>并命名为<code>homework-v0.2.docx</code>。</p><p> 当B完成了自己的部分，这个时候需要将B完成的部分合并到模版中。复制<code>homework-v0.docx</code> 为<code>homework-v1.docx</code> ，在新文件中插入B完成的内容然后保存，这个时候就形成了v1版本的报告。</p><p>这个时候，我们有了两份文件：</p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">homework-v0.docx</span><br><span class="line">homework-v1.docx </span><br></pre></td></tr></table></figure><p>v0和v1之间的区别是什么？v1在v0的基础上新增了内容，而上文中v0.1和v0.2是更改了一些内容，我们称这些内容为变更。上文中，我们通过复制文件方式实现了版本的管理和追踪，实现了对变更的管理和追踪。</p><p>这只是版本控制的一种实现方式，一种最简单的实现方式。接下来再聊聊版本控制系统。</p><h2 id="版本控制系统"><a href="#版本控制系统" class="headerlink" title="版本控制系统"></a>版本控制系统</h2><p><strong>什么是版本控制系统，用于管理和追踪变更的工具</strong>。这里面的变更不仅仅是针对代码的，也可以是文档或者其他的工程文件等。</p><h3 id="本地版本控制系统-Local-Version-Control-Systems"><a href="#本地版本控制系统-Local-Version-Control-Systems" class="headerlink" title="本地版本控制系统(Local Version Control Systems)"></a>本地版本控制系统(<strong>Local Version Control Systems)</strong></h3><p>使用复制文件这种方式，很容易犯错，一不小心就会写错文件或者覆盖到意料之外的文件。</p><img src="lvcs.png" width="60%"><p>因此就有了<strong>本地版本控制系统，通常是采用数据库来记录文件的历次更新差异</strong>。本地版本控制系统是第一代版本控制系统，其代表是Revision Control System(RCS)。<a href="https://www.gnu.org/software/rcs/">RCS</a>的工作原理是将补丁（文件之间的差异）以一种特殊的方式保存在磁盘上，然后添加补丁的方式重新创建任何时间点的文件。</p><h3 id="集中版本控制系统-Centralized-Version-Control-Systems"><a href="#集中版本控制系统-Centralized-Version-Control-Systems" class="headerlink" title="集中版本控制系统(Centralized Version Control Systems)"></a>集中版本控制系统(<strong>Centralized Version Control Systems)</strong></h3><p>在本地版本控制系统的使用过程，不可避免的问题就是如何与其他开发者协同工作。</p><img src="cvcs.png" width="60%"><p>因此就有了集中版本控制系统，也就是第二代版本控制系统。相对于本地VCS，其提供了如下优点：</p><ul><li>项目透明度。项目成员可以知道项目中其他成员在做什么。</li><li>更加精确的权限控制。CVCS的管理员可以设置谁可以做什么。</li><li>更方便管理。</li></ul><p>当然也是有缺点的，最大的缺点就是单点故障。日常的开发协作是严重依赖于中心服务器，如果服务器挂了，项目成员将不能进行协作，如果服务器的磁盘损坏且无备份，有可能会损失整个历史记录。</p><p>其代表工具有CVS，Subversion(SVN)</p><h3 id="分布式版本控制系统-Distributed-Version-Control-Systems"><a href="#分布式版本控制系统-Distributed-Version-Control-Systems" class="headerlink" title="分布式版本控制系统(Distributed Version Control Systems)"></a>分布式版本控制系统(<strong>Distributed Version Control Systems)</strong></h3><p>分布式版本控制系统中，每一个客户端不是提取了最新的快照，而是镜像了整个代码仓库，包括历史记录等，如果某个服务器挂，可以使用任何客户端的存储库复制回服务器中以将其还原。</p><img src="dvcs.png" width="60%"><p>分布式版本控制系统，又称为第三代版本控制系统，其代表有BitKeeper、Git、Monotone、darcs、Mercurial。目前Git是主流的选择。</p><p>以上部分，关于<em>本地版本控制系统，集中版本控制系统，分布式版本控制系统</em> 主要来自于<a href="https://git-scm.com/book/en/v2/Getting-Started-About-Version-Control">Git的官网</a>，只有部分内容，详细内容请阅读官方资料。</p><h2 id="为什么需要版本控制系统"><a href="#为什么需要版本控制系统" class="headerlink" title="为什么需要版本控制系统"></a>为什么需要版本控制系统</h2><ol><li>协作。在一个多人的项目中，项目成员更加方便地贡献代码，更加快速地高效地采用其他成员贡献的代码。</li><li>版本存储。</li><li>回滚。因为有版本存在，可以快速回滚到什么一个版本。</li><li>追踪变更历史。可以清楚地知道整个代码库中，谁在什么时间做出了什么改动，改动的具体内容是什么。</li><li>备份。备份时分布式版本控制系统附带一个非常好用的功能，每个项目成员都拥有完整的代码副本，当服务器挂了，也可以快速恢复。</li></ol><h2 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h2><p><a href="https://git-scm.com/book/en/v2/Getting-Started-About-Version-Control">About Version Control (git-scm.com)</a></p><p><a href="https://www.atlassian.com/git/tutorials/what-is-version-control">what is version-control</a></p>]]></content>
+    
+    
+    <summary type="html">&lt;p&gt;本文将聊一聊版本控制和版本控制系统。&lt;/p&gt;</summary>
+    
+    
+    
+    <category term="DevOps" scheme="https://chengqing.dev/categories/DevOps/"/>
+    
+    <category term="Version Control" scheme="https://chengqing.dev/categories/DevOps/Version-Control/"/>
+    
+    
+    <category term="DevOps" scheme="https://chengqing.dev/tags/DevOps/"/>
+    
+    <category term="Version Control" scheme="https://chengqing.dev/tags/Version-Control/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>2021干得不错,2022继续加油</title>
+    <link href="https://chengqing.dev/2021/12/30/2021-2022/"/>
+    <id>https://chengqing.dev/2021/12/30/2021-2022/</id>
+    <published>2021-12-30T12:22:47.000Z</published>
+    <updated>2021-12-30T12:22:47.000Z</updated>
+    
+    <content type="html"><![CDATA[<p>2021年，于我而言是变化极多的一年。总体趋势是好的，我看见了更多的可能和更多的希望。</p><p>还完了贷款。</p><p>换了一份工作。离开了ThoughtWorks，加入了SAP。</p><p>完成了第一场纯英语Session（2021年10月28日）。</p><p>学会了游泳。</p><p>做了一次桌面改造。</p><p>接种了新冠疫苗。这是我小学几年级之后第一次接种疫苗，小学接种完疫苗之后没多久就得了脑膜炎，虽然二者没有啥相关性，但是还是怕。</p><p>入手了一个扫地机器人。</p><p>组装了一台电脑。6月组装电脑，年底发12代，有一种49年入国军的感觉。</p><p>新入手了一台NAS。目前总存储应该超过了30T了。</p><p>……</p><span id="more"></span><h2 id="2021年"><a href="#2021年" class="headerlink" title="2021年"></a>2021年</h2><h3 id="完成了的目标"><a href="#完成了的目标" class="headerlink" title="完成了的目标"></a>完成了的目标</h3><ul><li>考证计划。 Azure Developer Associate</li><li>在新加坡看一场电影。在新加坡看了一场电影，忘记名字了（看来是真的老了）。</li><li>小说。追完《临渊行》和《帅教官》（一如既往的草草结尾），目前没啥网络小说可以追了。</li><li>小破站。对小破站的上的内容开始有点挑剔了，知识性内容的差距和国外某站还是很大的。今年发现一个比较给力的UP主 先看测评。</li><li>回国。提桶跑路，比预想的回国早了很多。</li></ul><h3 id="没有完成的目标"><a href="#没有完成的目标" class="headerlink" title="没有完成的目标"></a>没有完成的目标</h3><ul><li>52篇博客。数了一下，只完成了17篇。</li><li>把《中国乡村》看完。社科的书籍是真难啃。今年看了《实践论》《矛盾论》，伟人就是伟人。</li></ul><h3 id="吐槽"><a href="#吐槽" class="headerlink" title="吐槽"></a>吐槽</h3><p><strong>刚跑路，前东家就上市了。</strong></p><p>今年不适合理财，或者说我不适合理财。</p><p>在坡县觉得没地方可去，回国后是啥地方也没有去（就回了一趟家，然后去了一趟深圳）。</p><p>至今买不起显卡，现在的显卡连帝国时代都带不动。</p><h2 id="2022年"><a href="#2022年" class="headerlink" title="2022年"></a>2022年</h2><p>2022年，要有规律。早睡早起好身体。<br>2022年，要有朝气。<br>2022年，要多出去走走。</p><h3 id="新的目标"><a href="#新的目标" class="headerlink" title="新的目标"></a>新的目标</h3><ol><li>减肥20斤，76kg→66kg，1-5月每个月瘦4斤，6-8月保持，9-12月争取每月瘦1斤。</li><li>加强Python,Java,Ruby,Typescript,PHP, 学习Go。</li><li>每季度阅读一本社科人文书籍。</li><li>每月输出3-4篇有效有质量的博客。</li><li>每月读阅读一本技术书籍。</li><li>证书目标：Azure DevOps(1-2月)，Azure Solutions Architect Expert(5-6月), AWS Certified Solutions Architect – Professional（3-4月）</li><li>每天坚持写日志。</li><li>每周至少做一次饭（正餐）。</li></ol>]]></content>
+    
+    
+    <summary type="html">&lt;p&gt;2021年，于我而言是变化极多的一年。总体趋势是好的，我看见了更多的可能和更多的希望。&lt;/p&gt;
+&lt;p&gt;还完了贷款。&lt;/p&gt;
+&lt;p&gt;换了一份工作。离开了ThoughtWorks，加入了SAP。&lt;/p&gt;
+&lt;p&gt;完成了第一场纯英语Session（2021年10月28日）。&lt;/p&gt;
+&lt;p&gt;学会了游泳。&lt;/p&gt;
+&lt;p&gt;做了一次桌面改造。&lt;/p&gt;
+&lt;p&gt;接种了新冠疫苗。这是我小学几年级之后第一次接种疫苗，小学接种完疫苗之后没多久就得了脑膜炎，虽然二者没有啥相关性，但是还是怕。&lt;/p&gt;
+&lt;p&gt;入手了一个扫地机器人。&lt;/p&gt;
+&lt;p&gt;组装了一台电脑。6月组装电脑，年底发12代，有一种49年入国军的感觉。&lt;/p&gt;
+&lt;p&gt;新入手了一台NAS。目前总存储应该超过了30T了。&lt;/p&gt;
+&lt;p&gt;……&lt;/p&gt;</summary>
+    
+    
+    
+    <category term="Life" scheme="https://chengqing.dev/categories/Life/"/>
+    
+    
+    <category term="2020" scheme="https://chengqing.dev/tags/2020/"/>
+    
+    <category term="总结" scheme="https://chengqing.dev/tags/%E6%80%BB%E7%BB%93/"/>
+    
+    <category term="2021" scheme="https://chengqing.dev/tags/2021/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>Gitlab pipeline 等待手动操作</title>
+    <link href="https://chengqing.dev/2021/12/20/gitlab-waiting-for-approval/"/>
+    <id>https://chengqing.dev/2021/12/20/gitlab-waiting-for-approval/</id>
+    <published>2021-12-20T11:38:52.000Z</published>
+    <updated>2021-12-20T11:38:52.000Z</updated>
+    
+    <content type="html"><![CDATA[<p>在持续交付的过程中，需要手动确认，然后才能继续部署到生产环境。在本文中将实现这个过程，也是一个踩坑的过程。</p><span id="more"></span><h2 id="如何实现"><a href="#如何实现" class="headerlink" title="如何实现"></a>如何实现</h2><p>说出来其实很简单，如下所示：</p><figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">waiting-for-approval:</span></span><br><span class="line">  <span class="attr">stage:</span> <span class="string">waiting-for-approval</span></span><br><span class="line">  <span class="attr">when:</span> <span class="string">manual</span></span><br><span class="line">  <span class="attr">allow_failure:</span> <span class="literal">false</span></span><br><span class="line">  <span class="attr">script:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="string">echo</span> <span class="string">&quot;waiting-for-approval&quot;</span></span><br></pre></td></tr></table></figure><p>这里面有两个关键字段： <code>when</code> 和 <code>allow_failure</code> 。</p><h3 id="when"><a href="#when" class="headerlink" title="when"></a><code>when</code></h3><p>该字段指示在什么条件下执行该Job。可以使用如下值,</p><ul><li><code>on_success</code> (默认): 当上一个stage中的所有Job成功执行之后才能执行或者上一个stage中所有的Job 配置有字段<code>allow_failure: true</code> 。</li><li><code>manual</code>: 手动触发该Job。</li><li><code>always</code>: 无论之前的stage是否成功，总是执行该Job。</li><li><code>on_failure</code>: 当上一个stage中有Job失败的情况下，执行该Job。</li><li><code>delayed</code>: 延迟一段时间执行该Job。</li><li><code>never</code>: 不执行该Job.</li></ul><h3 id="allow-failure"><a href="#allow-failure" class="headerlink" title="allow_failure"></a><code>allow_failure</code></h3><p>该字段决定了当前Job执行失败的情况下，是否继续执行pipeline。值可以是<code>true</code> 或者<code>false</code> 。</p><p><strong>注意其默认值，这是比较坑的一点</strong></p><ul><li>当Job有 <code>when: true</code> 时，默认值为 <code>true</code></li><li>当Job有 <code>when: true</code> 并且配置了 <code>rules</code> ，默认值为 false</li><li>其他情况，默认值为 <code>true</code></li></ul><h2 id="踩坑过程"><a href="#踩坑过程" class="headerlink" title="踩坑过程"></a>踩坑过程</h2><h3 id="踩坑"><a href="#踩坑" class="headerlink" title="踩坑"></a>踩坑</h3><p>我想实现如所示pipeline</p><img src="ci-demo.png" width="80%"><p><code>.gitlab-ci.yml</code> 如下：</p><figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">image:</span> <span class="string">alpine</span></span><br><span class="line"><span class="attr">stages:</span></span><br><span class="line"><span class="bullet">-</span> <span class="string">test</span></span><br><span class="line"><span class="bullet">-</span> <span class="string">build</span></span><br><span class="line"><span class="bullet">-</span> <span class="string">deploy-to-qa</span></span><br><span class="line"><span class="bullet">-</span> <span class="string">waiting-for-approval</span></span><br><span class="line"><span class="bullet">-</span> <span class="string">deploy-to-prod</span></span><br><span class="line"></span><br><span class="line"><span class="attr">test:</span></span><br><span class="line">  <span class="attr">stage:</span> <span class="string">test</span></span><br><span class="line">  <span class="attr">script:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="string">echo</span> <span class="string">&quot;test&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="attr">build:</span></span><br><span class="line">  <span class="attr">stage:</span> <span class="string">build</span></span><br><span class="line">  <span class="attr">script:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="string">echo</span> <span class="string">&quot;build&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="attr">deploy-to-qa:</span></span><br><span class="line">  <span class="attr">stage:</span> <span class="string">deploy-to-qa</span></span><br><span class="line">  <span class="attr">script:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="string">echo</span> <span class="string">&quot;deploy-to-qa&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="attr">waiting-for-approval:</span></span><br><span class="line">  <span class="attr">stage:</span> <span class="string">waiting-for-approval</span></span><br><span class="line">  <span class="attr">when:</span> <span class="string">manual</span></span><br><span class="line">  <span class="attr">script:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="string">echo</span> <span class="string">&quot;waiting-for-approval&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="attr">deploy-to-prod:</span></span><br><span class="line">  <span class="attr">stage:</span> <span class="string">deploy-to-prod</span></span><br><span class="line">  <span class="attr">script:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="string">echo</span> <span class="string">&quot;deploy-to-prod&quot;</span></span><br></pre></td></tr></table></figure><p>得到执行结果如下：<br><img src="pipeline-stream.png" width="80%"></p><p>我还没有点approval，怎么就执行 <code>deploy-to-prod</code> 了？又看了一眼pipeline的状态是 <code>passed</code> ，怎么就 <code>passed</code> 了？<br><img src="pipeline-status.png" width="80%"></p><h3 id="坑在哪里？"><a href="#坑在哪里？" class="headerlink" title="坑在哪里？"></a>坑在哪里？</h3><p>又去看看了文档<a href="https://docs.gitlab.com/ee/ci/yaml/#when">Keyword reference for the <code>.gitlab-ci.yml</code> file | GitLab</a> ，在 <strong><code>Additional details</code></strong> 中发现 了下面这段话</p><blockquote><p>The default behavior of <code>allow_failure</code> changes to <code>true</code> with <code>when: manual</code>. However, if you use <code>when: manual</code> with <code>[rules](https://docs.gitlab.com/ee/ci/yaml/#rules)</code>, <code>allow_failure</code> defaults to <code>false</code>.</p></blockquote><p>谜题解开了！</p><p>之后又找到另外一篇文档 <a href="https://docs.gitlab.com/ee/ci/jobs/job_control.html#create-a-job-that-must-be-run-manually">Choose when to run jobs | GitLab</a> ，创建一个必须被手动触发的Job。</p><h3 id="填坑"><a href="#填坑" class="headerlink" title="填坑"></a>填坑</h3><p>修改<code>.gitlab-ci.yml</code> ，如下所示：</p><figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">image:</span> <span class="string">alpine</span></span><br><span class="line"><span class="attr">stages:</span></span><br><span class="line"><span class="bullet">-</span> <span class="string">test</span></span><br><span class="line"><span class="bullet">-</span> <span class="string">build</span></span><br><span class="line"><span class="bullet">-</span> <span class="string">deploy-to-qa</span></span><br><span class="line"><span class="bullet">-</span> <span class="string">waiting-for-approval</span></span><br><span class="line"><span class="bullet">-</span> <span class="string">deploy-to-prod</span></span><br><span class="line"></span><br><span class="line"><span class="attr">test:</span></span><br><span class="line">  <span class="attr">stage:</span> <span class="string">test</span></span><br><span class="line">  <span class="attr">script:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="string">echo</span> <span class="string">&quot;test&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="attr">build:</span></span><br><span class="line">  <span class="attr">stage:</span> <span class="string">build</span></span><br><span class="line">  <span class="attr">script:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="string">echo</span> <span class="string">&quot;build&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="attr">deploy-to-qa:</span></span><br><span class="line">  <span class="attr">stage:</span> <span class="string">deploy-to-qa</span></span><br><span class="line">  <span class="attr">script:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="string">echo</span> <span class="string">&quot;deploy-to-qa&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="attr">waiting-for-approval:</span></span><br><span class="line">  <span class="attr">stage:</span> <span class="string">waiting-for-approval</span></span><br><span class="line">  <span class="attr">when:</span> <span class="string">manual</span></span><br><span class="line">  <span class="attr">allow_failure:</span> <span class="literal">false</span></span><br><span class="line">  <span class="attr">script:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="string">echo</span> <span class="string">&quot;waiting-for-approval&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="attr">deploy-to-prod:</span></span><br><span class="line">  <span class="attr">stage:</span> <span class="string">deploy-to-prod</span></span><br><span class="line">  <span class="attr">script:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="string">echo</span> <span class="string">&quot;deploy-to-prod&quot;</span></span><br></pre></td></tr></table></figure><p>其执行结果如下：<br><img src="pipeline-stream-2.png" width="80%"><br><img src="pipeline-status-2.png" width="80%"></p>]]></content>
+    
+    
+    <summary type="html">&lt;p&gt;在持续交付的过程中，需要手动确认，然后才能继续部署到生产环境。在本文中将实现这个过程，也是一个踩坑的过程。&lt;/p&gt;</summary>
+    
+    
+    
+    <category term="DevOps" scheme="https://chengqing.dev/categories/DevOps/"/>
+    
+    <category term="Gitlab" scheme="https://chengqing.dev/categories/DevOps/Gitlab/"/>
+    
+    
+    <category term="DevOps" scheme="https://chengqing.dev/tags/DevOps/"/>
+    
+    <category term="Gitlab" scheme="https://chengqing.dev/tags/Gitlab/"/>
+    
+    <category term="手动Job" scheme="https://chengqing.dev/tags/%E6%89%8B%E5%8A%A8Job/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>Gitlab CI/CD 之 动态pipeline</title>
+    <link href="https://chengqing.dev/2021/12/11/gitlab-dynamic-pipeline/"/>
+    <id>https://chengqing.dev/2021/12/11/gitlab-dynamic-pipeline/</id>
+    <published>2021-12-11T05:07:20.000Z</published>
+    <updated>2021-12-11T05:07:20.000Z</updated>
+    
+    <content type="html"><![CDATA[<p>在pipeline的最佳实践中，不推荐使用动态pipeline。任何代码的可读性都是至关重要的，一旦开始使用动态pipeline就很难保证可读性，甚至无法保证可维护性。</p><p>虽然不推荐使用动态pipeline，但是在某些场景之下，使用动态pipeline会帮助我们在保证可读性不变甚至提高的情况下，同时提高了可维护性，这个时候我们推荐使用动态pipeline。</p><span id="more"></span><p>比如，我们需要在CI上对同一个项目跑100个测试，这一个测试唯一的区别就是传入参数不一样，这些参数会随着我们产品的演进而进行更新，比如如下一个片段重复100次，是不是会很痛苦？</p><figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">test-with-arg-100:</span></span><br><span class="line">  <span class="attr">image:</span> <span class="string">ubuntu</span></span><br><span class="line">  <span class="attr">stage:</span> <span class="string">test</span></span><br><span class="line">  <span class="attr">script:</span></span><br><span class="line">    <span class="bullet">-</span> <span class="string">auto/test</span> <span class="number">100</span></span><br></pre></td></tr></table></figure><h2 id="父子pipeline（Parent-child-pipeline）"><a href="#父子pipeline（Parent-child-pipeline）" class="headerlink" title="父子pipeline（Parent-child pipeline）"></a>父子pipeline（<strong>Parent-child pipeline）</strong></h2><p>在Gitlab CI/CD 中，父子pipeline就是在一个pipeline中嵌套执行另外一个pipeline配置文件，即子pipeline。</p><p>子管道类型：</p><ul><li>合并请求子pipeline（Merge request child pipelines）</li><li>动态子pipeline（Dynamic child pipelines）</li><li>嵌套子pipeline（Nested child pipelines）</li></ul><p>更多内容可以参考<a href="https://docs.gitlab.com/ee/ci/pipelines/parent_child_pipelines.html">官方文档</a></p><h2 id="案例：使用动态子pipeline部署多个应用"><a href="#案例：使用动态子pipeline部署多个应用" class="headerlink" title="案例：使用动态子pipeline部署多个应用"></a>案例：使用动态子pipeline部署多个应用</h2><p>在我的Homelab环境中，有一个Infrastructure的Kubernetes集群，集群中需要部署一系列的基础应用，比如：</p><ul><li>external dns用于注册ingress dns到DNS server上。</li><li>Hashicorp Vault、Jenkins等实验应用</li><li>Prometheus等监控应用</li></ul><p>每一个应用都有一个对应的部署脚本，如下所示。</p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">├── auto</span><br><span class="line">│   ├── deploy-elasticsearch</span><br><span class="line">│   ├── deploy-exdns-homelab-local</span><br><span class="line">│   ├── deploy-grafana</span><br><span class="line">│   ├── deploy-hashicorp-vault</span><br><span class="line">│   ├── deploy-influxdb</span><br><span class="line">│   ├── deploy-ingress</span><br><span class="line">│   ├── deploy-jenkins</span><br><span class="line">│   ├── deploy-prometheus</span><br><span class="line">│   ├── deploy-sonarqube</span><br><span class="line">│   └── deploy-vsphere-prometheus</span><br></pre></td></tr></table></figure><p>上面的部署脚本，我都是使用 <code>auto/deploy-*</code> 这样的模式命名部署脚本的。这样根据部署脚本规律生成子pipeline的YAML配置文件，生成脚本如下。</p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#!/bin/bash -eu</span></span><br><span class="line"></span><br><span class="line"><span class="built_in">cd</span> <span class="string">&quot;<span class="subst">$(dirname <span class="string">&quot;<span class="variable">$0</span>&quot;</span>)</span>/..&quot;</span></span><br><span class="line"></span><br><span class="line">CI_CONFIG_FILE=<span class="string">&quot;child-ci.yml&quot;</span></span><br><span class="line"></span><br><span class="line">cat &lt;&lt;<span class="string">EOF &gt; &quot;$&#123;CI_CONFIG_FILE&#125;&quot;</span></span><br><span class="line"><span class="string">image: $CI_REGISTRY_IMAGE</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">default:</span></span><br><span class="line"><span class="string">  retry: 2</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">variables:</span></span><br><span class="line"><span class="string">  KUBERNETES_SERVICE_ACCOUNT_OVERWRITE: k8s-infra-admin</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">stages:</span></span><br><span class="line"><span class="string">  - deploy</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">EOF</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">for</span> script_name <span class="keyword">in</span> auto/deploy-* ; <span class="keyword">do</span></span><br><span class="line">      cat &lt;&lt;<span class="string">EOF &gt;&gt; &quot;$&#123;CI_CONFIG_FILE&#125;&quot;</span></span><br><span class="line"><span class="string">$&#123;script_name//\//-&#125;:</span></span><br><span class="line"><span class="string">  stage: deploy</span></span><br><span class="line"><span class="string">  script:</span></span><br><span class="line"><span class="string">    - $&#123;script_name&#125;</span></span><br><span class="line"><span class="string">  only:</span></span><br><span class="line"><span class="string">    - main</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">EOF</span></span><br><span class="line"><span class="keyword">done</span></span><br></pre></td></tr></table></figure><p>部分pipeline配置文件 <code>.gitlab-ci.yml</code> 如下：</p><figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">stages:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="string">generate-ci</span></span><br><span class="line">  <span class="bullet">-</span> <span class="string">run-ci</span></span><br><span class="line"><span class="attr">default:</span></span><br><span class="line">  <span class="attr">retry:</span> <span class="number">2</span></span><br><span class="line"></span><br><span class="line"><span class="attr">generate-config:</span></span><br><span class="line">  <span class="attr">image:</span> <span class="string">alpine:3.12</span></span><br><span class="line">  <span class="attr">before_script:</span></span><br><span class="line">    <span class="bullet">-</span> <span class="string">apk</span> <span class="string">--no-cache</span> <span class="string">add</span> <span class="string">bash</span></span><br><span class="line">  <span class="attr">stage:</span> <span class="string">generate-ci</span></span><br><span class="line">  <span class="attr">script:</span> <span class="string">auto/generate-ci-config</span></span><br><span class="line">  <span class="attr">artifacts:</span></span><br><span class="line">    <span class="attr">paths:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">child-ci.yml</span></span><br><span class="line"></span><br><span class="line"><span class="attr">child-pipeline:</span></span><br><span class="line">  <span class="attr">stage:</span> <span class="string">run-ci</span></span><br><span class="line">  <span class="attr">trigger:</span></span><br><span class="line">    <span class="attr">strategy:</span> <span class="string">depend</span></span><br><span class="line">    <span class="attr">include:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="attr">artifact:</span> <span class="string">child-ci.yml</span></span><br><span class="line">        <span class="attr">job:</span> <span class="string">generate-config</span></span><br></pre></td></tr></table></figure><p>pipeline执行图如下所示：<br><img src="pipeline.png" width="80%"></p>]]></content>
+    
+    
+    <summary type="html">&lt;p&gt;在pipeline的最佳实践中，不推荐使用动态pipeline。任何代码的可读性都是至关重要的，一旦开始使用动态pipeline就很难保证可读性，甚至无法保证可维护性。&lt;/p&gt;
+&lt;p&gt;虽然不推荐使用动态pipeline，但是在某些场景之下，使用动态pipeline会帮助我们在保证可读性不变甚至提高的情况下，同时提高了可维护性，这个时候我们推荐使用动态pipeline。&lt;/p&gt;</summary>
+    
+    
+    
+    <category term="DevOps" scheme="https://chengqing.dev/categories/DevOps/"/>
+    
+    <category term="Gitlab" scheme="https://chengqing.dev/categories/DevOps/Gitlab/"/>
+    
+    
+    <category term="DevOps" scheme="https://chengqing.dev/tags/DevOps/"/>
+    
+    <category term="Gitlab" scheme="https://chengqing.dev/tags/Gitlab/"/>
+    
+    <category term="动态pipeline" scheme="https://chengqing.dev/tags/%E5%8A%A8%E6%80%81pipeline/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>桌面改造1.0</title>
+    <link href="https://chengqing.dev/2021/10/26/refactor-desk-1-0/"/>
+    <id>https://chengqing.dev/2021/10/26/refactor-desk-1-0/</id>
+    <published>2021-10-26T15:23:12.000Z</published>
+    <updated>2021-10-26T15:23:12.000Z</updated>
+    
+    <content type="html"><![CDATA[<p>2021年6月2日，解除隔离，被放出来。时隔半年，我又回到了我的小窝。</p><p>在当时，可以预见的是，下一份工作可以长期在家办公（WFH），因此桌面还是需要改造一下，让自己在未来的生活和工作满意，取悦自己。</p><span id="more"></span><h2 id="之前的桌面"><a href="#之前的桌面" class="headerlink" title="之前的桌面"></a>之前的桌面</h2><p>先看一下之前的桌面，</p><img src="before.jpg" width="80%"><p>主要部件如下：</p><ol><li>23.8寸显示器（<strong>AOC Q2490PXQ</strong>）x2</li><li>屏幕挂灯(<strong>倍思</strong>) x2</li><li>摄像头（<strong>罗技 C310</strong>）x1</li><li>台灯（<strong>小米 米家LED智能台灯1S</strong>）x1</li><li>HUB (<strong>ORICO 全铝高速USB3.1Gen2</strong>) x1</li><li>HDMI 切换器（<strong>威迅 HDMI切换器二进一出 4K</strong>) x1</li><li>KVM切换器（<strong>绿联 KVM切换器 HDMI切屏器2进1出4K高清</strong>）x1</li><li>USB充电器 (<strong>小米 原装60W USB充电器快充版 六口输出 QC3.0快充协议</strong>) x1</li><li>温湿度传感器（<strong>小米 米家蓝牙温湿度计2</strong>）x1</li><li>插排（<strong>公牛（BULL） 防过充插座带多口全USB插排</strong>）x1</li><li><strong>微软（Microsoft）Designer 无线蓝牙鼠标</strong> x1</li><li>键盘（<strong>TT G821 青轴</strong>）x1</li><li><strong>罗技（Logitech） M720 鼠标</strong> x1</li><li>鼠标垫（<strong>宜适酷 典雅黑 BAS1801-01</strong>）x1</li><li>桌子（宜家 <strong>利蒙 150x75桌面 + 可调节桌腿</strong>）x 1</li><li>电脑椅（<strong>联丰 ds-177黑</strong>）x1</li></ol><p>主要问题：</p><ol><li>显示器屏幕分辨率为2k。虽然2k，但是内心却是向往4k。2k的屏敲代码一点儿都不开心。</li><li>摄像头不支持Windows Hello</li><li>桌面太乱了</li></ol><h2 id="第一部分改造"><a href="#第一部分改造" class="headerlink" title="第一部分改造"></a>第一部分改造</h2><h3 id="显示器"><a href="#显示器" class="headerlink" title="显示器"></a>显示器</h3><p>选择显示器最重要的是解决第一个问题，让我可以开心地码字。</p><p>第一步，确定确定尺寸。我桌面宽度是75cm，之前的是显示器是23.8寸，感觉还是比较舒适的，因此<strong>尺寸范围是23.8-27</strong>。</p><p>第二步，确定分辨率。之前的显示器是2560*1440dpi，文字显示的细腻度虽然比1080p好很多，但是依然有点糊以及有锯齿。我使用显示器的主要场景是写代码，所以文字显示细腻度对我来说是很重要的，因此选择<strong>分辨率为4K</strong>。</p><p>第三步，确定其他功能。我长期面对屏幕，因此<strong>护眼</strong>对我比较重要。</p><p>第四步，显示器品牌。我个人更加倾向于DELL，LG这一类的大厂，也包括之前使用过的AOC。</p><p><strong>最终的选择是DELL P2721Q。</strong></p><p>最开始的时候购入的并不是DELL P2721Q，而是<strong>AOC U27U2D</strong>。从参数上来说AOC U27U2D完全满足我的需求，但是使用了一天之后，有一丢丢眩晕，然后7天无理由退货，重新购入DELL P2721Q。选择显示器的时候，重要的还是自己的眼睛舒服。</p><h3 id="屏幕挂灯"><a href="#屏幕挂灯" class="headerlink" title="屏幕挂灯"></a>屏幕挂灯</h3><p>之前的屏幕挂灯使用的是<strong>倍思</strong>的，其开关和调节按钮均在挂灯，每次开关都需要站起来，很不方便。</p><p>更换成<strong>小米</strong>的显示器挂灯。这款挂灯最大的优势就是够用而且便宜。</p><h3 id="摄像头"><a href="#摄像头" class="headerlink" title="摄像头"></a>摄像头</h3><p>之前使用的罗技C310摄像头是2017年购入，但是主要使用还是在2020年。主要的使用场景就是Zoom视频会议，除此之外没啥太大功能。</p><p>更换摄像头最主要的理由还是想使用Windows Hello。我使用1Password管理自己几乎所有的密码，使用了Windows Hello之后，我就不用每次输入PIN码或者密码了。</p><p>Windows Hello摄像头可选项特别少，当然淘宝上也还是有不少自行改装的。下面是几款我知道的支持Windows hello 的摄像头</p><ul><li>Intel RealSense SR300 F200 （3D结构光）</li><li>联想500 （红外）</li><li>罗技（Logitech）C1000e （红外）</li></ul><p>我购入的是联想500（购入时价格399）。理由就是相较于罗技C1000e（京东报价1499）便宜，而且当时没发现Intel RealSense F200（淘宝200多）。</p><h3 id="小结"><a href="#小结" class="headerlink" title="小结"></a>小结</h3><p>2021年6月，第一部分改造到这里就结束，主要是对一部分硬件进行了升级和更换。</p><img src="in-progress.jpg" width="80%"><h2 id="第二部分改造"><a href="#第二部分改造" class="headerlink" title="第二部分改造"></a>第二部分改造</h2><p>2021年6月21日，加入我现在的公司，开始了长期的在家办公。</p><p>第二部分改造起因如下：</p><ul><li>2021年10月的时候发现，宜家利蒙桌子的桌面弯曲了</li><li>电脑椅也歪了</li></ul><p>改造目标：</p><ul><li>电动升降桌</li><li>电竞椅/人体工学椅</li><li>无线桌面。桌面整洁，尽可能的没有线之类的。</li></ul><h3 id="电动升降桌"><a href="#电动升降桌" class="headerlink" title="电动升降桌"></a>电动升降桌</h3><p>为什么选择电动升降桌？</p><p>久坐的危害是非常大的，比如人脑供血不足，全身肌肉酸痛，脖子僵硬，痔疮，肥胖等等。坐站交替可以有效的缓解这些问题，电动升降桌就提供了站着办公的可能性。</p><p>如何选购可参考如下链接：</p><p><a href="https://zhuanlan.zhihu.com/p/158779121">2021年电动升降桌选购攻略及高性价比电动升降桌推荐（20210628更） - 知乎 (zhihu.com)</a></p><p><a href="https://zhuanlan.zhihu.com/p/383385657">电动升降桌推荐|电动升降桌选购指南 - 知乎 (zhihu.com)</a></p><p>我最终购入的是<strong>Brateck北弧 K33。</strong>桌面大小，我个人还是倾向于选择150*75的。使用了快一个月了，够用但是并不优秀，比如：</p><ul><li>站立办公打字的时候，会有轻微的晃动，在我的可接受范围内。</li><li>加上桌面最低高度76cm，有点略高，使用时需要将椅子调整到最高位置。</li></ul><p>综合其价格和配置，总体上还是满意的。</p><h3 id="电脑椅"><a href="#电脑椅" class="headerlink" title="电脑椅"></a>电脑椅</h3><p>我购入的电脑椅是黑白调的电竞椅，入手这款椅子的原因：</p><ol><li>皮质，不容易积灰。</li><li>配色，红黑配。我挺喜欢红黑配色。</li></ol><p>我比较喜欢在疲惫的时候小憩一会儿或者单纯闭着眼睛躺着思考，这款电脑椅支持后躺，但是并不完美。当坐着的时候靠背有一定的支持作用，比较合适。但是躺下的时候，颈部是悬空的，很难受，加一个颈枕可以缓解这个痛点。</p><p>电脑椅和电动升降桌，每一个拎出来看，都还行。但是1+1 &lt; 2啊，两个之间的高度不契合，因此我加了一个网易严选的乳胶坐垫。</p><h3 id="显示器增高架"><a href="#显示器增高架" class="headerlink" title="显示器增高架"></a>显示器增高架</h3><p>选择入手显示增高架的原因如下：</p><ol><li>站立办公和坐着办公的时候，显示器的高度是需要调节，让自己感到舒适。DELL显示器支持的调节范围并不在我的舒适范围内。</li><li>增加桌面可利用空间。</li></ol><p>最终是在淘宝上购入的一款120cm的实木增高架。</p><img src="zeng-gao.jpg" width="80%"><p>在增高架上可以摆放一些小物价，比如书签、蓝牙温湿度传感器、便利贴等等。增高架最右边放着两个控制屏幕挂灯的旋转按钮。旁边是两个叠在一起的收纳盒，用于收纳数据线。将小米USB充电器使用3M魔术贴粘在了增高架上，可以进一步利用空间。这样剩下的空间就可以收纳键盘和鼠标。比如在看书或者吃饭的时候就可以把，键鼠收纳起来，桌面空间就足够大了。</p><h3 id="桌底收纳槽"><a href="#桌底收纳槽" class="headerlink" title="桌底收纳槽"></a>桌底收纳槽</h3><p>收纳桌下的各种线，是桌底下变得整洁。之前总是不小心踢掉某根线啥的。</p><img src="shou-na.jpg" width="80%"><p>在长81cm的收纳槽可以放下很多东西，一个10孔插排，一个KVM切换器，一个4空插排。可以使用束线带将多余的线收纳起来，这样线就不会特别乱。</p><h3 id="洞洞板"><a href="#洞洞板" class="headerlink" title="洞洞板"></a>洞洞板</h3><p>洞洞板可以灵活地收纳一些物品，比如将剪刀、手工刀、卷尺等挂在上面使用起来更加方便。</p><img src="dong-dong-ban.jpg" width="80%"><p>我选择的这一款带有一个托盘，托盘下面的空间放下扫地机器人，托盘上放打印机，这样可以更加有效率地利用空间。</p><h3 id="KVM切换器"><a href="#KVM切换器" class="headerlink" title="KVM切换器"></a>KVM切换器</h3><p>简单介绍一下我的使用场景，我有两台电脑，一台是公司的macbook pro，一台是自己组装的台式机。每天我都需要在这两个设备之间切换使用，工作的时候使用公司的电脑，非工作时间就使用自己的电脑。</p><p>之前的解决方案是使用了两个切换器，一个HDMI切换器用于切换其中一个屏幕，另外一个便宜的KVM的切换器用于切换屏幕和键鼠等外接设备。主要问题是，每次切换需要手动按两次按钮。</p><p>购入新的KVM切换器之后，可以使用鼠标在两个设备之间快速切换。而且因为不需要手动在切换器上操作，可以将其收纳到桌下理线槽上，进一步节省桌面空间。</p><p>到这里，第二部分改造就完成了。</p><h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><img src="finished.png" width="80%"><p>主要部件：</p><ol><li>屏幕挂灯(<strong>小米显示器挂灯</strong>) x2  <a href="https://item.jd.com/100007773997.html">京东</a></li><li>摄像头（<strong>联想500</strong>）x1</li><li>显示器（<strong>戴尔(DELL) P2721Q</strong>）x2 <a href="https://item.jd.com/100008883679.html">京东</a></li><li>120cm显示器增高架 x1 <a href="https://item.taobao.com/item.htm?spm=a1z09.2.0.0.31c42e8dqDa5uR&id=647103981604&_u=qenv8fsfe9d">淘宝</a></li><li>温湿度传感器（<strong>小米 米家蓝牙温湿度计2</strong>）x1 <a href="https://item.jd.com/100010622784.html">京东</a></li><li>收纳盒（<strong>JEKO 透明桌面收纳盒</strong>） x2 <a href="https://item.jd.com/100012243060.html">京东</a></li><li>USB充电器 (<strong>小米 原装60W USB充电器快充版 六口输出 QC3.0快充协议</strong>) x1</li><li>台灯（<strong>小米 米家LED智能台灯1S</strong>）x1 <a href="https://item.jd.com/100005676004.html">京东</a></li><li>键盘（<strong>TT G821 青轴</strong>）x1 <a href="https://item.jd.com/100010955206.html">京东</a></li><li>鼠标（<strong>罗技（Logitech） M720 鼠标</strong>） x1 <a href="https://item.jd.com/3903182.html">京东</a></li><li>鼠标垫（<strong>宜适酷 典雅黑 BAS1801-01</strong>）x1 <a href="https://item.jd.com/6383781.html">京东</a></li><li>桌子（<strong>Brateck升降桌K33</strong>) x1 <a href="https://item.jd.com/100018027300.html#crumb-wrap">京东</a></li><li>电脑椅（<strong>黑白调HDJY002BMJ</strong>）x1 <a href="https://item.jd.com/71134747428.html">京东</a></li><li>桌底收纳槽 x1 <a href="https://item.taobao.com/item.htm?spm=a1z09.2.0.0.31c42e8dqDa5uR&id=652211892542&_u=qenv8fse9b2">淘宝</a></li><li>KVM切换器（<strong>eKL 412HK</strong>）x1 <a href="https://item.jd.com/100009668205.html">京东</a></li><li>洞洞板 x1 <a href="https://item.taobao.com/item.htm?spm=a1z09.2.0.0.31c42e8dqDa5uR&id=609165789095&_u=qenv8fsb97f">淘宝</a></li></ol><p>通过这次改造之后，我能够更好地利用桌面空间，在不同的任务之间更好地切换。比如在看书的时候，可以把键鼠收纳到增高架下。利用增高架可以有效地将线缆隐藏起来，使用收纳槽可以更好地收纳线缆。</p><p>我也曾尝试使用磁吸模块将线缆固定在桌子侧边，这样桌面虽然看起来很整洁但是桌下依旧乱，因此暂时放弃了这种方案。<strong>即时收纳，物归原处才能够保持桌面的整洁</strong>。</p><p>到此刻位置，其实还有很多事情没有做，比如：</p><ul><li>无线充电</li><li>氛围灯</li><li>桌面时钟</li><li>提醒工具</li></ul><p>这些会在桌面改造2.0中慢慢来做，在未来的部分我更加倾向于自己DIY。</p>]]></content>
+    
+    
+    <summary type="html">&lt;p&gt;2021年6月2日，解除隔离，被放出来。时隔半年，我又回到了我的小窝。&lt;/p&gt;
+&lt;p&gt;在当时，可以预见的是，下一份工作可以长期在家办公（WFH），因此桌面还是需要改造一下，让自己在未来的生活和工作满意，取悦自己。&lt;/p&gt;</summary>
+    
+    
+    
+    <category term="Life" scheme="https://chengqing.dev/categories/Life/"/>
+    
+    
+    <category term="桌面改造" scheme="https://chengqing.dev/tags/%E6%A1%8C%E9%9D%A2%E6%94%B9%E9%80%A0/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>使用群晖NAS备份vSphere虚拟机</title>
+    <link href="https://chengqing.dev/2021/10/19/homelab-backup-vsphere-vm-to-synology/"/>
+    <id>https://chengqing.dev/2021/10/19/homelab-backup-vsphere-vm-to-synology/</id>
+    <published>2021-10-19T13:17:19.000Z</published>
+    <updated>2021-10-19T13:17:19.000Z</updated>
+    
+    <content type="html"><![CDATA[<p>TL;DR（太长不读版本）</p><p>大致思路就是，在Homelab环境中，利用Synology套件Active Backup for Business进行Vmware vSphere虚拟机备份。</p><hr><p>数据的灾备是很重要的，就像是开车系安全带，骑小摩托戴头盔，都是为了安全。在这篇博客中，将带着大家一起看看在利用群晖NAS备份vsphere中的虚拟机。</p><span id="more"></span><h2 id="Active-Backup-for-Business"><a href="#Active-Backup-for-Business" class="headerlink" title="Active Backup for Business"></a>Active Backup for Business</h2><p><code>Active Backup for Business</code>是群晖NAS的一个套件。</p><p>主要功能：</p><ul><li>支持Windows 服务器/PC、Linux服务器、SMB/rsync文件服务器以及VMware vSphere/Microsoft Hyper-V虚拟机备份</li><li>灵活的计划和保留策略可自定义备份策略</li><li>支持备份数据还原，包括完整设备还原、即时还原和精细文件还原</li></ul><p>详细信息参考 <a href="%5Bhttps://www.synology.cn/zh-cn/dsm/6.2/software_spec/abb%5D(https://www.synology.cn/zh-cn/dsm/6.2/software_spec/abb)">Active Backup for Business技术规范</a></p><h2 id="从头开始创建一个备份任务"><a href="#从头开始创建一个备份任务" class="headerlink" title="从头开始创建一个备份任务"></a>从头开始创建一个备份任务</h2><h3 id="第一步：-安装并打开Active-Backup-for-Business"><a href="#第一步：-安装并打开Active-Backup-for-Business" class="headerlink" title="第一步： 安装并打开Active Backup for Business"></a>第一步： 安装并打开Active Backup for Business</h3><p>在套件中心中安装Active Backup for Business，该套件是免费的，很实在。</p><p>安装完成之后，打开它。</p><img src="synology-backup-1.png" width="80%"><h3 id="第二步：添加一个Hypervisor"><a href="#第二步：添加一个Hypervisor" class="headerlink" title="第二步：添加一个Hypervisor"></a>第二步：添加一个Hypervisor</h3><p>Hypervisor，也称为虚拟机器监视器或 VMM，是创建和运行虚拟计算机 （VM） 的软件。</p><p>按照下图添加你的esxi或者vCenter：</p><img src="synology-backup-2.png" width="80%"><p>添加完成之后，就可以在界面上看到Esxi或者vCenter的机器了，如下图所示。</p><img src="synology-backup-3.png" width="80%"><h3 id="第三步：创建备份任务"><a href="#第三步：创建备份任务" class="headerlink" title="第三步：创建备份任务"></a>第三步：创建备份任务</h3><img src="synology-backup-4.png" width="80%"><p>在创建过程中，我们通常会指定一个备份名称（上图中是vSphere-Task-1）， 然后可以选择是备份一台虚拟机还是多台虚拟机（上图中选中了openvpn-access-server），然后点击<em>下一步</em>。</p><img src="synology-backup-5.png" width="80%"><p>在列表中，选中一个共享文件夹用来存放备份数据。安装套件的时候会默认创建一个叫ActiveBackupforBusiness的共享文件夹。然后点击<em>下一步</em>。</p><img src="synology-backup-6.png" width="80%"><p>继续点击<em>下一步</em>。</p><img src="synology-backup-7.png" width="80%"><p>在这一步中是配置<em>备份任务</em>。可以使用默认配置，或者根据自己需求配置。然后点击<em>下一步</em>。</p><img src="synology-backup-8.png" width="80%"><p>这是一个检查页面，没问题就直接点击<em>下一步</em>。</p><img src="synology-backup-9.png" width="80%"><p>这一步就是很重要的一步，默认情况下是手动备份。这里推荐使用定时备份，这就不需要人为干预了。这样的备份也就更有意义了。然后<em>下一步</em>。</p><img src="synology-backup-10.png" width="80%"><p>这一块儿是设置保留策略，推荐使用。可以根据自己的情况进行选择，然后<em>下一步</em>。</p><img src="synology-backup-11.png" width="80%"><p>这一块儿是设置恢复权限，然后<em>下一步</em>。</p><img src="synology-backup-13.png" width="80%"><p>整个备份任务的总结，检查一下，没有问题就点击<em>完成</em>。这时候会有弹窗弹出，讯问是否现在备份，可根据自己的实际情况进行选择。</p><img src="synology-backup-14.png" width="80%"><p>到任务列表中，我们就可以看到刚才创建的备份任务以及上一次备份状态和下一次备份时间。</p><h3 id="第四步：备份"><a href="#第四步：备份" class="headerlink" title="第四步：备份"></a>第四步：备份</h3><p>定时备份任务会定时被触发，而手动备份就需要自己手动触发。</p><h2 id="恢复"><a href="#恢复" class="headerlink" title="恢复"></a>恢复</h2><img src="synology-restore-1.png" width="80%"><p>在虚拟机列表中选中已经备份了的虚拟机，然后点击<em>恢复</em></p><img src="synology-restore-2.png" width="80%"><p>从版本列表中选择一个备份版本，然后<em>下一步</em>。</p><img src="synology-restore-3.png" width="80%"><p>选择恢复到VMware vSphere，然后<em>下一步</em></p><img src="synology-restore-4.png" width="80%"><p>选择快速恢复还是完全恢复。</p><p>快速恢复：将NAS的磁盘挂载到Esxi上作为Datastore。</p><p>完全恢复：将备份数据复制到Esxi的Datastore中。</p><p>根据自己的实际情况选择，然后<em>下一步</em>。</p><img src="synology-restore-5.png" width="80%"><p>选择虚拟机恢复到哪里，支持原路径恢复，也可以更改到新的位置。然后<em>下一步</em>。</p><img src="synology-restore-6.png" width="80%"><p>检查一下，没有问题就点击<em>完成</em>，开始恢复。</p><h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>在Homelab环境中，利用NAS对数据备份可以有效地保证数据安全。</p><p>重要的数据一定要多备份。</p>]]></content>
+    
+    
+    <summary type="html">&lt;p&gt;TL;DR（太长不读版本）&lt;/p&gt;
+&lt;p&gt;大致思路就是，在Homelab环境中，利用Synology套件Active Backup for Business进行Vmware vSphere虚拟机备份。&lt;/p&gt;
+&lt;hr&gt;
+&lt;p&gt;数据的灾备是很重要的，就像是开车系安全带，骑小摩托戴头盔，都是为了安全。在这篇博客中，将带着大家一起看看在利用群晖NAS备份vsphere中的虚拟机。&lt;/p&gt;</summary>
+    
+    
+    
+    <category term="Homelab" scheme="https://chengqing.dev/categories/Homelab/"/>
+    
+    
+    <category term="Homelab" scheme="https://chengqing.dev/tags/Homelab/"/>
+    
+    <category term="群晖" scheme="https://chengqing.dev/tags/%E7%BE%A4%E6%99%96/"/>
+    
+    <category term="Synology" scheme="https://chengqing.dev/tags/Synology/"/>
+    
+    <category term="Active Backup for Business" scheme="https://chengqing.dev/tags/Active-Backup-for-Business/"/>
+    
+    <category term="Esxi" scheme="https://chengqing.dev/tags/Esxi/"/>
+    
+    <category term="vSphere" scheme="https://chengqing.dev/tags/vSphere/"/>
+    
+    <category term="备份" scheme="https://chengqing.dev/tags/%E5%A4%87%E4%BB%BD/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>什么是DevOps</title>
+    <link href="https://chengqing.dev/2021/10/18/what-is-devops/"/>
+    <id>https://chengqing.dev/2021/10/18/what-is-devops/</id>
+    <published>2021-10-18T14:41:45.000Z</published>
+    <updated>2021-10-18T14:41:45.000Z</updated>
+    
+    <content type="html"><![CDATA[<p>DevOps是什么？在不同的组织会给出不同的解释，目前也没有一个通用的定义。总结一下，如下。</p><p>DevOps 是一系列<strong>文化理念</strong>、<strong>实践</strong>和<strong>工具</strong>的集合。其目的是：</p><ol><li>提高组织<strong>高速的可靠的交付能力。</strong></li><li>提升组织内部<strong>沟通和协作。敏捷软件开发实践</strong>打破了BA（需求分析）、QA（测试）和Dev（开发）之间的“墙”，使得三者之间信息互通，对于同一个需求理解是一致的。DevOps则是打破了Dev(开发)和Ops之间的“墙”，使得软件开发、部署、维护之间形成一条流动的通道。</li></ol><span id="more"></span><h2 id="文化理念"><a href="#文化理念" class="headerlink" title="文化理念"></a>文化理念</h2><p>DevOps文化的核心目的打破团队（Dev和Ops）之间的“墙”，提高团队之间的透明度、沟通和协作。DevOps的核心理念可以理解为如下四点：</p><ol><li>共同承担责任（shared responsibilities）</li><li>反馈（Feedback）</li><li>自动化（Automation）</li><li>质量内建（Build quality in）</li></ol><h3 id="共同承担责任（shared-responsibilities）"><a href="#共同承担责任（shared-responsibilities）" class="headerlink" title="共同承担责任（shared responsibilities）"></a>共同承担责任（shared responsibilities）</h3><p>狭义上，Dev和Ops应当共同对产品的成败负责。在敏捷软件开发的实践前提下，团队中的所有角色（包括但不限于BA、Dev、QA、Ops）共同对产品的成败负责。在整个产品的生命周期内，团队应当共同承担维护系统的责任，确保可以更快<strong>可靠地交付产品。</strong></p><h3 id="反馈（Feedback）"><a href="#反馈（Feedback）" class="headerlink" title="反馈（Feedback）"></a>反馈（Feedback）</h3><p>反馈对于DevOps是非常重要的。通过反馈，我们可以不断地改进团队不同角色之间的协同工作方式以及系统。</p><p>反馈不仅仅包括团队角色之间的反馈，还应该包含系统与团队的反馈。比如：</p><ol><li>pipeline状态，应当及时地通知到团队，推动团队下一步的工作。</li><li>生产事故，监控到生产事故应当及时反馈给团队。当API Gateway短时间内出现大量5xx错误，我们应当及时处理，提高用户的满意度。</li><li>根据生产监控的各种指标来优化系统。</li></ol><p>在DevOps的实践过程中，我们要将反馈这个核心理念铭记于心。在增强反馈的过程中，也要注意不要过度，应当避免团队成员陷入过多工具和消息中。</p><h3 id="自动化（Automation）"><a href="#自动化（Automation）" class="headerlink" title="自动化（Automation）"></a>自动化（Automation）</h3><p>自动化是整个DevOps的基石，有助于团队协作。自动化测试、自动化部署等可以让团队各种关注于业务本身，减少人为错误的机会。自动化可以让团队更快、更可靠地构建、测试、发布产品。</p><p>在实践DevOps的过程中，我们应当尽可能地减少手动操作。实现自动化的过程中，我们需要不同角色之间的协作和沟通。建议有一套统一的自动化脚本来增强团队不同角色之间的协作，建立统一的上下文。</p><h3 id="质量内建（Build-quality-in）"><a href="#质量内建（Build-quality-in）" class="headerlink" title="质量内建（Build quality in）"></a>质量内建（Build quality in）</h3><p>质在开发过程中，要求软件生命周期之间参与的各个角色都需要实时的对软件的质量负责。确保软件在交付到下一环节前已经有了基础的质量保证。从而减少因为质量问题导致的返工，避免浪费大量人力成本。</p><p>为更快更可靠地交付应用和服务，在源头上对质量进行把控是必不可少的。</p><h2 id="实践"><a href="#实践" class="headerlink" title="实践"></a>实践</h2><p>DevOps的常见实践如下：</p><ol><li><a href="/2021/04/24/what-is-ci-cd/">CI/CD</a>： 持续集成、持续交付或持续部署。CI/CD是整个DevOps的基础，pipeline就是CI/CD的具象化。</li><li>持续测试（Continuous testing）</li><li>持续监控（Continuous Monitoring）</li><li>基础设施既代码（Infrastructure as Code，IaC）</li></ol><p>DevOps实践的具体解释，不在此文中赘述，为有另外的文章单独解释。</p><h2 id="常见工具"><a href="#常见工具" class="headerlink" title="常见工具"></a>常见工具</h2><p>协作工具：Jira, Mural, Slack, Microsoft Teams等</p><p>版本控制工具：Github, Gitlab, Bitbucket等</p><p>持续集成工具：Jenkins, TeamCity, Travis CI等</p><p>部署工具：Terraform, AWS CloudFormation, Ansible, Helm等</p><p>监控工具：Zabbix， AWS CloudWatch等</p><p>DevOps的工具极其种类非常多，上述不过是其一小部分。</p><h2 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h2><ol><li><a href="%5Bhttps://en.wikipedia.org/wiki/DevOps%5D(https://en.wikipedia.org/wiki/DevOps)">DevOps</a></li><li><a href="%5Bhttps://aws.amazon.com/devops/what-is-devops/%5D(https://aws.amazon.com/devops/what-is-devops/)">AWS-What is DevOps</a></li><li><a href="%5Bhttps://www.atlassian.com/devops%5D(https://www.atlassian.com/devops)">Atlassian - DevOps</a></li><li><a href="%5Bhttps://martinfowler.com/bliki/DevOpsCulture.html%5D(https://martinfowler.com/bliki/DevOpsCulture.html)">Martin Fowler- DevOps Culture</a></li></ol>]]></content>
+    
+    
+    <summary type="html">&lt;p&gt;DevOps是什么？在不同的组织会给出不同的解释，目前也没有一个通用的定义。总结一下，如下。&lt;/p&gt;
+&lt;p&gt;DevOps 是一系列&lt;strong&gt;文化理念&lt;/strong&gt;、&lt;strong&gt;实践&lt;/strong&gt;和&lt;strong&gt;工具&lt;/strong&gt;的集合。其目的是：&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;提高组织&lt;strong&gt;高速的可靠的交付能力。&lt;/strong&gt;&lt;/li&gt;
+&lt;li&gt;提升组织内部&lt;strong&gt;沟通和协作。敏捷软件开发实践&lt;/strong&gt;打破了BA（需求分析）、QA（测试）和Dev（开发）之间的“墙”，使得三者之间信息互通，对于同一个需求理解是一致的。DevOps则是打破了Dev(开发)和Ops之间的“墙”，使得软件开发、部署、维护之间形成一条流动的通道。&lt;/li&gt;
+&lt;/ol&gt;</summary>
+    
+    
+    
+    <category term="DevOps" scheme="https://chengqing.dev/categories/DevOps/"/>
+    
+    
+    <category term="DevOps" scheme="https://chengqing.dev/tags/DevOps/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>小米智能家居体验</title>
+    <link href="https://chengqing.dev/2021/06/21/homelab-xiaomi-smarthome/"/>
+    <id>https://chengqing.dev/2021/06/21/homelab-xiaomi-smarthome/</id>
+    <published>2021-06-21T14:00:00.000Z</published>
+    <updated>2021-06-21T14:00:00.000Z</updated>
+    
+    <content type="html"><![CDATA[<p>很早就想写一篇这样东西来分享一下自己简单的家庭网络，但是一直懒得写。现在(2021-06-20 03:20:00)有点失眠,就开个头,不知道啥时候能写完,随缘吧。写到后面（2021年6月21日２２：００），果然写偏了，干脆改成小米智能家居体验了。</p><span id="more"></span><h2 id="场景＆体验"><a href="#场景＆体验" class="headerlink" title="场景＆体验"></a>场景＆体验</h2><p>租住的地方是一个一室一厅带厨房和阳台的回迁房，这也基本上就是我的活动范围。白天不是在沙发上窝着，就是书桌前坐着，晚上当然是躺床上了。</p><p>先从最简单的地方说起，卧室。卧室里面最主要的两个东西，空调和床。这个空调是一个我之前从未听说过的品牌—志高，当然也有点老旧了，也自然是不可能联网的。成都的夏天还是比较热的，在客厅书桌前干活的我感觉到了热了之后，需要回到卧室找到遥控器打开空调，略微有点麻烦，也容易打断自己的思路。</p><p>这个时候就需要引入一个设备—<strong>米家空调伴侣2</strong>。这个小东西可以将普通空调智能化，说人话，就是遥控器可以做的事情它都可以做，还不需要你在它面前操作。你把它插在空调插座上，再把空调插头插在它身上，让它蹭上你家WiFi，然后就可以通过<strong>米家APP</strong>操作空调了。这是第一步，我们可以把遥控器扔到某个不用的角落里面了。</p><p>在炎热的夏天，我在电脑前面敲着键盘，码着字，机柜里面几台服务器呼呼地跑着，温度逐渐上升，感受到了温度的残忍，于是我拿出手机，通过<strong>米家APP</strong>将空调打开并调至１６度，慢慢感觉到了一丝凉爽。简而言之，当我坐在书桌前且周围的温度让我感到炎热时，开启空调，调整为制冷模式，设定温度为16度。如果我知道具体温度是多少，我就可以将“<strong>让我感到炎热时</strong>”量化为一个具体数值。因此我们需要一个传感器来测量温度－－－<strong>小米温湿度传感器</strong>。再来一个<strong>小米人体传感器</strong>来检测是否有人移动，这个比较鸡肋，一分钟检测一次，假设第一分钟检测到了你，然后你保持不动，那么后续就不会检测到有人移动。然后在米家APP中添加一条智能：</p><figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">同时满足　小米人体传感器有人移动　和　小米温湿度传感器温度高于30度时　执行开启空调到指定状态</span><br></pre></td></tr></table></figure><p>添加之后需要一段时间之后才会生效，大概几分钟吧，没有具体测试。当你感受到炎热时，站起来再坐下就可以触发上述规则了。有点智障了。。。。人体传感器就不能判断有没有人吗？</p><p>有一段时间，尝试着不把手机带入卧室，这个时候就需要一个闹钟叫醒我起床，还有如果半夜醒来了看个时间。小爱触屏音响就完美的满足了我的需求，在工作日和非工作日可以在不同的时间叫醒我。懒到极致的我，在之前总是被迫起床关灯以及抹黑找床（经常撞伤），因为卧室只有一个开关且在门口，直到有一天看到<strong>米家床头灯２代</strong>，及时购入。之后的生活就是进卧室时，“小爱同学，开灯”，躺下睡觉时，“小爱同学，关灯”。</p><p>一朝被盗，终身防贼。２０１8年９月７日凌晨（具体我也不知道），在我回成都的第三个月，我家被入室盗窃了，当天报案，至今没有结果，估摸着没有结果了。当天入手了门窗传感器，人体传感器，小米摄像头等，所有有可能的进入的家里的窗户和门都安装了门窗传感器，阳台安装了小米摄像头和红外传感器。同时小米摄像头的数据也会传输到NAS中，多NAS备份，异地备份。租房的一个小Tips，不要租低楼层的，临街的以及外面有可能进入的。</p><p>一个人住总是怕钥匙忘带或者不小心把钥匙丢了，没有备份就没有安全感。<strong>小米智能门锁</strong>完美解决了这个问题。并且在我回家的时候，可以自动触发关闭摄像头并开启<strong>小米网关</strong>在家模式。</p><h2 id="痛点"><a href="#痛点" class="headerlink" title="痛点"></a>痛点</h2><p>使用过程中，有哪些痛点？</p><p>１.　我会经常更换自己家里的WiFi密码，看心情可能一周一换，也可能一月一换。在更新的过程中，需要把这些智能家居设备重新联网，工作量巨大。</p><p>２.　上述的那个问题，小米给出了解决方案，使用小米路由器的一个新功能畅快连。经过本人试验，并没有什么用途，因为我家所有的设备的最新固件都不支持。并且小米路由器对于我不适用，重度网络使用者很容易就感受到了断流的痛。</p><p>３.　米家APP在设备多的时候，极其难用。没有一个很好的控制中心。未来打算尝试一下Home Assistant，自己收集数据，自己做dashboard，不让数据离开局域网。</p><p>４.　如果你的小米网关坏掉了，那我只能表示恭喜你了。你需要重新添加设备，然后重新命名极其麻烦的过程。</p><p>５.　核心模块（比如小米网关）不是高可用的。</p><h2 id="最后"><a href="#最后" class="headerlink" title="最后"></a>最后</h2><p>在这个野蛮的互联网时代，谁又不是在裸奔呢？</p><p>如果不是一个公众人物，选择一个某个智能家居平台的时候，只需要问自己信任与否。在使用的过程中，尽量减少对云存储的使用，在家的时候尽量关闭摄像头等等。没有什么事比健康安全地活着更重要。</p><p>如果你是一个公众人物，能不用就不用，攻击你的收益远远高于成本。</p>]]></content>
+    
+    
+    <summary type="html">&lt;p&gt;很早就想写一篇这样东西来分享一下自己简单的家庭网络，但是一直懒得写。现在(2021-06-20 03:20:00)有点失眠,就开个头,不知道啥时候能写完,随缘吧。写到后面（2021年6月21日２２：００），果然写偏了，干脆改成小米智能家居体验了。&lt;/p&gt;</summary>
+    
+    
+    
+    <category term="Homelab" scheme="https://chengqing.dev/categories/Homelab/"/>
+    
+    
+    <category term="Homelab" scheme="https://chengqing.dev/tags/Homelab/"/>
+    
+    <category term="小米" scheme="https://chengqing.dev/tags/%E5%B0%8F%E7%B1%B3/"/>
+    
+    <category term="智能家居" scheme="https://chengqing.dev/tags/%E6%99%BA%E8%83%BD%E5%AE%B6%E5%B1%85/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>DevOps的实践经验</title>
+    <link href="https://chengqing.dev/2021/05/31/some-devops-practices/"/>
+    <id>https://chengqing.dev/2021/05/31/some-devops-practices/</id>
+    <published>2021-05-31T11:54:58.000Z</published>
+    <updated>2021-05-31T11:54:58.000Z</updated>
+    
+    <content type="html"><![CDATA[<p>这又是一番偏执的胡言乱语。做DevOps两年以来，见过好的实践，也见过糟糕的实践。每一个对DevOps实践都有不同的认识，在这篇博客，我只是聊聊自己的观点，如有不对敬请指正。</p><p>大致而言，我会遵循三个原则：</p><ol><li>零手动操作。</li><li>干净：童子军军规。</li><li>简单：奥卡姆剃刀。</li></ol><span id="more"></span><h2 id="零手动操作"><a href="#零手动操作" class="headerlink" title="零手动操作"></a>零手动操作</h2><p>什么是手动操作？任何没有被代码化（as code）的资源或者操作都可以被认为是手动操作。</p><p>常见的手动操作：</p><ul><li>基础设施没有代码化，存在资源是没有被代码管理，或者部分操作没有被管理。</li><li>应用部署流程需要手动干预。</li><li>应用配置需要手动指定等。</li></ul><h3 id="真的要手动操作？"><a href="#真的要手动操作？" class="headerlink" title="真的要手动操作？"></a>真的要手动操作？</h3><p>当你需要做任何手动操作之前，先问自己一系列问题：</p><ol><li>该操作是否以及被代码化（as code），如果是，那就执行代码。不要把自己的代码遗落在角落里。如果没有，继续下一个问题。</li><li>该操作是否紧急？如果紧急，那么可以临时手动操作，但是需要多个人一起以及严格的流程。之后，需要将该操作代码化。如果你不想代码化，那么看看下面一系列问题？</li><li>该操作在后续是否还有发生的机率？如果有，就需要代码化。如果你依然不愿意，继续下一个问题。</li><li>如何确保在下一次执行（可能间隔一周，也可能是间隔一个月）的时候完全重复当前操作？任何手动操作都是不可被追溯的，不可完全被重复的。如果确保不了，那就需要代码化。如果能确保，那你就是神，我只能表示膜拜。</li><li>我们有完备的文档，还需要代码化吗？代码比文档可靠，优雅的代码可读性远高于文档。</li></ol><h3 id="避免手动操作的实践"><a href="#避免手动操作的实践" class="headerlink" title="避免手动操作的实践"></a>避免手动操作的实践</h3><ol><li>基础设施即代码（IaC，Infrastructure as code）</li><li>CI/CD</li><li>自动化脚本（Automation script）</li><li>GitOps</li></ol><h2 id="干净：童子军军规"><a href="#干净：童子军军规" class="headerlink" title="干净：童子军军规"></a>干净：童子军军规</h2><blockquote><p>The Boy Scout Rule: Always leave the campground cleaner than you found it.</p></blockquote><p>干净，可以从两方面说，<strong>代码整洁</strong>和<strong>环境干净</strong>。童子军军规：让营地比你来时更干净。这是一条非常适用的规则。</p><h3 id="代码整洁"><a href="#代码整洁" class="headerlink" title="代码整洁"></a><strong>代码整洁</strong></h3><p>代码整洁中的“代码”不仅仅指业务代码，还应当包含测试代码，基础设施代码等一切代码。我见过一些业务代码很整洁，非业务代码很糟糕的项目，为什么会这样呢？我大胆地猜测一下，团队没有把基础设施代码当成代码，而是在战略上忽视了它。</p><p>所有的代码享有平等的地位。无论是否是业务代码，在应用的生命周期中，我们都需要去维护。</p><p>关于这部分的内容，<strong>强烈推荐学习一下《代码整洁之道》和《重构》</strong>。</p><h3 id="环境干净"><a href="#环境干净" class="headerlink" title="环境干净"></a>环境干净</h3><p>在开发阶段，保持开发环境的干净。</p><p>在CI/CD 环境中，保持构建、测试、部署环境干净。通常而言，一个CI/CD 的Agent会被不止一个应用使用，因此保持环境的干净就显得尤为重要。</p><p>在生产环境中，保持运行环境干净。</p><h3 id="实践"><a href="#实践" class="headerlink" title="实践"></a>实践</h3><ol><li>TDD</li><li>Simple Design</li><li>容器化</li><li>Code Diff</li></ol><h2 id="简单：奥卡姆剃刀原理"><a href="#简单：奥卡姆剃刀原理" class="headerlink" title="简单：奥卡姆剃刀原理"></a>简单：奥卡姆剃刀原理</h2><blockquote><p>Entities should not be multiplied unnecessarily</p></blockquote><p>在写这篇的博客的时候，我也一直在纠结是不是要把干净和简单合并在一起写。在提到干净的时候，它和脏是对立的，往往是指代码是否整洁。而简单和复杂是相对应的，通常是和业务，架构，技术栈等相关的。</p><p>业务复杂与否是来自于功能需求，这一块儿没有深入研究过，暂且不谈。</p><p>架构和技术栈的复杂度来自于非功能性需求。一个项目总会有人员的变动，在人员变动的过程中，复杂的东西在传递的过程中很容易失真。在引入一项新的技术或者语言时，需要仔细考虑是否真的需要，如果不是必须的就不要引入。简而言之，遵循奥卡姆剃刀原理：如无必要，勿增实体(Entities should not be multiplied unnecessarily)。</p>]]></content>
+    
+    
+    <summary type="html">&lt;p&gt;这又是一番偏执的胡言乱语。做DevOps两年以来，见过好的实践，也见过糟糕的实践。每一个对DevOps实践都有不同的认识，在这篇博客，我只是聊聊自己的观点，如有不对敬请指正。&lt;/p&gt;
+&lt;p&gt;大致而言，我会遵循三个原则：&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;零手动操作。&lt;/li&gt;
+&lt;li&gt;干净：童子军军规。&lt;/li&gt;
+&lt;li&gt;简单：奥卡姆剃刀。&lt;/li&gt;
+&lt;/ol&gt;</summary>
+    
+    
+    
+    <category term="DevOps" scheme="https://chengqing.dev/categories/DevOps/"/>
+    
+    
+    <category term="DevOps" scheme="https://chengqing.dev/tags/DevOps/"/>
+    
+    <category term="实践" scheme="https://chengqing.dev/tags/%E5%AE%9E%E8%B7%B5/"/>
+    
+    <category term="Best Practices" scheme="https://chengqing.dev/tags/Best-Practices/"/>
+    
+    <category term="零手动操作" scheme="https://chengqing.dev/tags/%E9%9B%B6%E6%89%8B%E5%8A%A8%E6%93%8D%E4%BD%9C/"/>
+    
+    <category term="童子军军规" scheme="https://chengqing.dev/tags/%E7%AB%A5%E5%AD%90%E5%86%9B%E5%86%9B%E8%A7%84/"/>
+    
+    <category term="奥卡姆剃刀" scheme="https://chengqing.dev/tags/%E5%A5%A5%E5%8D%A1%E5%A7%86%E5%89%83%E5%88%80/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>为什么需要本地开发环境容器化？</title>
+    <link href="https://chengqing.dev/2021/05/25/why-containerize-local-dev-env/"/>
+    <id>https://chengqing.dev/2021/05/25/why-containerize-local-dev-env/</id>
+    <published>2021-05-25T12:02:02.000Z</published>
+    <updated>2021-05-25T12:02:02.000Z</updated>
+    
+    <content type="html"><![CDATA[<p>一个线上运行的应用，最开始都是在软件工程师的电脑里面开发的。因此，软件工程师的电脑里面会有一个本地的开发环境，用于IDE以及本地测试。</p><span id="more"></span><h2 id="潜在问题"><a href="#潜在问题" class="headerlink" title="潜在问题"></a>潜在问题</h2><h3 id="单体应用"><a href="#单体应用" class="headerlink" title="单体应用"></a>单体应用</h3><p>如果项目是一个大型的单体应用，通常而言会有前端和后端开发工程师，以后端开发工程师为例，在后端开发工程师的电脑中会装有以下环境：</p><ul><li>语言的运行环境，比如JDK，Node.js等。</li><li>数据库，比如MySQL，PostgreSQL。</li><li>其他奇奇怪怪的东西。</li></ul><p>如果该项目只有一个后端开发工程师，可能会有以下问题：</p><ul><li>线上运行环境与本地不一致，进而导致凭啥我本地都是好的，上线就遇到各种奇奇怪怪的问题。</li><li>更换电脑之后，需要再次手动安装运行环境。</li><li>操作系统升级可能会破坏已有运行环境。</li></ul><p>如果该项目有多个后端开发工程师，在基于一个后端开发工程师可能会遇到的问题的基础上，可能还会遇到如下问题：</p><ul><li>工程师之间的操作系统版本不一样，通常不会遇到什么问题，遇到了那就呵呵哒。</li><li>工程师之间的运行环境可能不一致，有可能是patch版本的差异，也可能minor版本的差异。</li><li>重复的工作会被不同的人干很多次。</li><li>上新人的成本高昂，需要事无巨细地指导。</li><li>即使有一份完备的环境配置文档，也会出现手动配置错误。不要相信任何的手动操作，任何的手动操作都是不可靠的，无论操作者的水平多高或者多低。</li></ul><p>如果该项目上线之后，转移给另外的一个运维团队去维护，可能会遇到如下问题：</p><ul><li>这东西怎么在本地启动？虽然有文档存在，但是在开发工程中仍然会有很多隐性的上下文。</li><li>本地测试怎么跑？</li><li>运维团队的工程师需要在本地安装无数的运行环境。</li></ul><h3 id="微服务应用"><a href="#微服务应用" class="headerlink" title="微服务应用"></a>微服务应用</h3><p>如果微服务应用是一个团队开发的，那么可能会遇到如下问题：</p><ul><li>工程师之间的运行环境可能不一致。</li><li>服务之间的运行环境不一样，本地环境需要配置多个不同版本的环境。</li></ul><p>如果是微服务应用多个团队开发的，基于上面情况遇到问题，可能还会出现如下问题：</p><ul><li>技术栈不一样，比如A团队使用Golang，B团队使用Java，C团队使用Node.js。</li><li>代码风格不一致。</li></ul><p>如果之后转移给一个独立的运维团队维护，会遇到如下问题：</p><ul><li>技术栈的多样性，导致运维团队学习成本居高不下。</li><li>技术栈的多样性，同样会增加保持本地环境与线上环境的一致性的难度。</li><li>代码风格的不一致，运维在修复一个bug的时候，可能会不停地切换技术栈和代码风格，甚至同一个技术栈的不同版本，运维团队的体验度会不断下降。</li></ul><p>可能还有诸多问题是我所未考虑到的。</p><h3 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h3><p>大致总结一下上述问题：</p><ul><li>运行环境不一样，工程师之间的本地环境不一样，本地开发环境和线上运行环境不一样。</li><li>技术栈的多样性，进而引入的隐性context。</li><li>代码风格不一致</li></ul><h2 id="解决方案"><a href="#解决方案" class="headerlink" title="解决方案"></a>解决方案</h2><p>基于上面的诸多问题，只能对一些问题提供解决一些解决思路。</p><h3 id="运行环境的不一致"><a href="#运行环境的不一致" class="headerlink" title="运行环境的不一致"></a>运行环境的不一致</h3><p>在所有的问题中，运行环境不一样是最普遍也是做容易解决的一个问题。在这一类问题中，最简单的解决方案就是容器化。</p><p>需要做到两个容器化：</p><ul><li>本地开发环境容器化。</li><li>线上运行环境容器化。</li></ul><p>我相信绝大多数团队都可以做到线上运行环境的容器化，因为这并不是一件很难的事情。而本地开发环境的容器化确实最容易被忽略的。</p><p>本地开发环境的容器化，可以很好地确保开发工程师之间的环境一致以及开发环境和线上环境的一致。同时，也可以很好地解决不同服务之间所采用的运行环境版版本不一致而导致开发出现的各种奇奇怪怪的问题。</p><h3 id="技术栈的多样性"><a href="#技术栈的多样性" class="headerlink" title="技术栈的多样性"></a>技术栈的多样性</h3><p>技术栈的多样性是我们所推崇和所追求的，其本身并不是问题，但是技术栈的多样性不可避免的会引入一定的副作用。而隐性上下文就是其中最明显的而又不容易被关注的。</p><p>什么是隐性上下文？简单举个例子，</p><ul><li>A团队使用 <code>node.js</code> 开发，使用 <code>npm</code> 对包进行管理，可能会把单元测试脚本命令放在 <code>package.json</code> 中，也可能不会。</li><li>B团队同样使用 <code>node.js</code> 开发，但是使用 <code>yarn</code> 进行包管理，同样单元测试脚本可能放到 <code>package.json</code> , 也可能不会。</li><li>C团队使用 <code>Java</code> 开发，使用 <code>gradle</code> 进行包管理。</li><li>D团队使用 <code>Kotlin</code> 开发，使用 <code>maven</code> 进行包管理。</li></ul><p>对于A团队而言，A团队知道如何把自己团队的本地环境运行起来，如何运行单元测试，可能会忘记这些内容写入到readme中或者package.json中。突然有一天，B团队的成员需要去更改一个A团队的实现，这个时候基于B团队的成员使用的技术栈而言，虽然会花点时间去阅读代码，或者基于已有的技术背景做出一些探索性的尝试，也是比较容易了解到如何本地启动A团队的服务，如何进行单元测试。</p><p>如果是C团队的程序需要更改A团队的一个实现，那么会是如何的呢？</p><p>如果有一天这个微服务应用完全交给了一个独立的运维团队运维，那么又会是什么样的呢？</p><p><strong>这一类团队内部默认都知道的，没有通过脚本或者文档呈现出来的上下文可以被理解为隐性上下文。</strong></p><p>如何解决隐性上下文？基于本地开发环境容器化的基础上，自动化脚本是一个比较好的实践方案。比如在每个服务代码库中，都写一个 <code>auto/test</code> 脚本，这脚本是负责跑单元测试，这样在不同团队之间是否会更好的管理这些隐性上下文？再比如代码风格检查也可以有一个脚本叫做 <code>auto/check-style</code> 。</p><h3 id="代码风格不一致"><a href="#代码风格不一致" class="headerlink" title="代码风格不一致"></a>代码风格不一致</h3><p>服务与服务之间的代码风格不一致，这是正常的，不同的技术栈必然会导致风格不一致。</p><p>那什么是问题？</p><ul><li>服务内部的代码风格不一致。</li><li>服务之间的代码风格不一致，但没有一个强有力的约束工具。</li></ul><p>如何解决？我们所遵循的所有代码风格都应该被工具管理起来，都可以配置化。</p><h3 id="总结-1"><a href="#总结-1" class="headerlink" title="总结"></a>总结</h3><p>上述几个问题，解决方案就是 本地开发环境容器化以及自动化脚本。</p>]]></content>
+    
+    
+    <summary type="html">&lt;p&gt;一个线上运行的应用，最开始都是在软件工程师的电脑里面开发的。因此，软件工程师的电脑里面会有一个本地的开发环境，用于IDE以及本地测试。&lt;/p&gt;</summary>
+    
+    
+    
+    <category term="DevOps" scheme="https://chengqing.dev/categories/DevOps/"/>
+    
+    
+    <category term="DevOps" scheme="https://chengqing.dev/tags/DevOps/"/>
+    
+    <category term="开发环境" scheme="https://chengqing.dev/tags/%E5%BC%80%E5%8F%91%E7%8E%AF%E5%A2%83/"/>
+    
+    <category term="容器化" scheme="https://chengqing.dev/tags/%E5%AE%B9%E5%99%A8%E5%8C%96/"/>
+    
+    <category term="自动化脚本" scheme="https://chengqing.dev/tags/%E8%87%AA%E5%8A%A8%E5%8C%96%E8%84%9A%E6%9C%AC/"/>
+    
+    <category term="隐性上下文" scheme="https://chengqing.dev/tags/%E9%9A%90%E6%80%A7%E4%B8%8A%E4%B8%8B%E6%96%87/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>什么是CI/CD</title>
+    <link href="https://chengqing.dev/2021/04/24/what-is-ci-cd/"/>
+    <id>https://chengqing.dev/2021/04/24/what-is-ci-cd/</id>
+    <published>2021-04-24T15:44:56.000Z</published>
+    <updated>2021-04-24T15:44:56.000Z</updated>
+    
+    <content type="html"><![CDATA[<p>CI/CD是一种持续软件开发的方法论，通过自动化脚本将软件开发过程中引入错误的可能性降到最小。从一个新功能的开发到其被部署到生产环境的过程中，尽可能地减少人工干预甚至没有人工干预。</p><p>CI/CD中涉及到三个概念：持续集成（Continuous Integration）、持续交付（Continuous Delivery）、持续部署（Continuous Deployment）。</p><span id="more"></span><h2 id="持续集成（Continuous-Integration）"><a href="#持续集成（Continuous-Integration）" class="headerlink" title="持续集成（Continuous Integration）"></a>持续集成（Continuous Integration）</h2><p>持续集成是指代码push到代码库后，通过运行构建和测试的过程来减少引入错误的可能，这个过程是自动被触发的。持续集成并不会消除bug，但是能够让我们更加容易地发现和修复bug。</p><p>持续集成主要运行构建、单元测试以及代码风格检查等这一类运行较快的测试和验证。</p><p>持续集成会运行在开发分支和master分支上，通常情况下，在开发分支上通过了持续集成的代码才能被合并到master分支。</p><h2 id="持续交付（Continuous-Delivery）"><a href="#持续交付（Continuous-Delivery）" class="headerlink" title="持续交付（Continuous Delivery）"></a>持续交付（Continuous Delivery）</h2><p>持续交付是持续集成的扩展，确保可以以一种可持续的方式将新的变更快速发布到生成环境。持续交付主要是确保应用可部署，可以随时发布到生产环境。</p><p>持续交付相比较持续集成，增加了验收测试，自动部署到staging环境等。可能会在staging环境做一些人工验证工作，验证工作完成之后再部署到生产环境。</p><p>持续交付主要运行在master分支，但是验收测试有时也会在开发分支上运行。</p><h2 id="持续部署（Continuous-Deployment）"><a href="#持续部署（Continuous-Deployment）" class="headerlink" title="持续部署（Continuous Deployment）"></a>持续部署（Continuous Deployment）</h2><p>持续部署也是基于持续集成的，与持续交付相似，比持续交付更进一步。持续部署会将每一个主线上的改变自动部署到生产环境。</p><p>相较于持续交付，它需要更加完备的测试。</p><p><img src="ci-cd.png" alt="ci/cd"><br>图片来源：<a href="http://www.atlassian.com/">www.atlassian.com</a></p><h2 id="CI-CD带来了什么好处"><a href="#CI-CD带来了什么好处" class="headerlink" title="CI/CD带来了什么好处"></a>CI/CD带来了什么好处</h2><p>下面将列举一些引入CI/CD带来的好处。</p><ul><li><p>频繁部署: CI/CD会加速应用构建和部署过程。能够帮助我们一天多次部署。</p></li><li><p>降低风险：通过不断发布尽可能小的功能，可以减少生产出现Bug的风险。同时也会让QA和客户对于发布不会感到很痛苦。</p></li><li><p>降低成本：引入CI/CD意味着需要覆盖更全的单元测试，更加完善的验收测试，看起来是引入更多的工作量。其实不尽然，没有很好的单元测试和验收测试，意味需要花费大量的时间去手工测试，同时有可能导致已有功能被破坏。当出现bug的时候（bug一定会出现的），没有测试，就意味着可能需要大量去查找和修复问题。</p></li><li><p>提高质量：通过一系列可靠的测试，可以及时地发现和修复bug。</p></li><li><p>提高团队协作：通过一系列的测试，能够帮助我们确认，我们的改动没有破坏到已有功能。</p></li></ul>]]></content>
+    
+    
+    <summary type="html">&lt;p&gt;CI/CD是一种持续软件开发的方法论，通过自动化脚本将软件开发过程中引入错误的可能性降到最小。从一个新功能的开发到其被部署到生产环境的过程中，尽可能地减少人工干预甚至没有人工干预。&lt;/p&gt;
+&lt;p&gt;CI/CD中涉及到三个概念：持续集成（Continuous Integration）、持续交付（Continuous Delivery）、持续部署（Continuous Deployment）。&lt;/p&gt;</summary>
+    
+    
+    
+    <category term="DevOps" scheme="https://chengqing.dev/categories/DevOps/"/>
+    
+    
+    <category term="DevOps" scheme="https://chengqing.dev/tags/DevOps/"/>
+    
+    <category term="Continuous Integration" scheme="https://chengqing.dev/tags/Continuous-Integration/"/>
+    
+    <category term="Continuous Delivery" scheme="https://chengqing.dev/tags/Continuous-Delivery/"/>
+    
+    <category term="Continuous Deployment" scheme="https://chengqing.dev/tags/Continuous-Deployment/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>[长期更新] WSL使用记录</title>
+    <link href="https://chengqing.dev/2021/04/24/long-term-wsl/"/>
+    <id>https://chengqing.dev/2021/04/24/long-term-wsl/</id>
+    <published>2021-04-24T02:21:30.000Z</published>
+    <updated>2021-12-26T04:41:40.000Z</updated>
+    
+    <content type="html"><![CDATA[<p>这是一篇长期更新的博客，主要记录我在使用<code>WSL</code>期间踩过的坑，小工具，优化等等。</p><span id="more"></span><h2 id="常见问题"><a href="#常见问题" class="headerlink" title="常见问题"></a>常见问题</h2><h3 id="文件权限问题"><a href="#文件权限问题" class="headerlink" title="文件权限问题"></a>文件权限问题</h3><p>在WSL中挂载Windows的磁盘时，文件的权限会变成777，在<code>ls</code>的时候会发现绿油油的一片。</p><p>第一步：执行<code>sudo vim /etc/wsl.conf</code></p><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">[automount]</span><br><span class="line">enabled &#x3D; true</span><br><span class="line">root &#x3D; &#x2F;</span><br><span class="line">options &#x3D; &quot;metadata,umask&#x3D;22,fmask&#x3D;11&quot;</span><br><span class="line">mountFsTab &#x3D; false</span><br></pre></td></tr></table></figure><p>第二步：重启wsl</p><p>对于WSL2可以在PowerShell或者CMD中执行<code>wsl --shutdown</code><br>对于WSL1可以以管理员身份在PowerShell或者CMD中，执行<code>net stop LxssManager</code>和<code>net start LxssManager</code></p><p>更多WSL的配置参考<a href="https://docs.microsoft.com/en-us/windows/wsl/wsl-config">wsl-config</a></p><h3 id="磁盘问题"><a href="#磁盘问题" class="headerlink" title="磁盘问题"></a>磁盘问题</h3><p>如果在WSL中遇到了 <code>Error: EPERM: operation not permitted, symlink</code> 或者说和<code>symlin</code> 有关的错误的时候，可以先检查一个磁盘的格式是否是NTFS或者ReFS 。</p><p>更多内容，请阅读<a href="/2021/01/01/wls-symlink/">WSL踩坑之硬盘格式问题</a></p><h3 id="时间同步问题"><a href="#时间同步问题" class="headerlink" title="时间同步问题"></a>时间同步问题</h3><p>在使用<code>WSL</code>的过程中，有时候会出现时间同步问题，通常是<code>WSL</code>时间比<code>Windows 10</code>的时间晚。</p><p><strong>如何解决？</strong></p><p>如果是Ubuntu的话，可以使用以下命令：</p><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">sudo apt install ntpdate</span><br><span class="line">sudo ntpdate time.windows.com</span><br></pre></td></tr></table></figure>]]></content>
+    
+    
+    <summary type="html">&lt;p&gt;这是一篇长期更新的博客，主要记录我在使用&lt;code&gt;WSL&lt;/code&gt;期间踩过的坑，小工具，优化等等。&lt;/p&gt;</summary>
+    
+    
+    
+    <category term="Long Term" scheme="https://chengqing.dev/categories/Long-Term/"/>
+    
+    <category term="Windows" scheme="https://chengqing.dev/categories/Windows/"/>
+    
+    <category term="WSL" scheme="https://chengqing.dev/categories/Windows/WSL/"/>
+    
+    
+    <category term="Windows 10" scheme="https://chengqing.dev/tags/Windows-10/"/>
+    
+    <category term="WSL" scheme="https://chengqing.dev/tags/WSL/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>[长期更新] Windows 10/Windows 11工具推荐</title>
+    <link href="https://chengqing.dev/2021/04/04/long-term-windows-tools/"/>
+    <id>https://chengqing.dev/2021/04/04/long-term-windows-tools/</id>
+    <published>2021-04-04T13:15:39.000Z</published>
+    <updated>2021-04-24T02:17:48.000Z</updated>
+    
+    <content type="html"><![CDATA[<p>这篇博客主要记录我在Windows 10上使用的一些有提升效率或者花里胡哨的工具，会一直更新下去。毕竟是个软粉嘛。</p><span id="more"></span><h2 id="通用工具"><a href="#通用工具" class="headerlink" title="通用工具"></a>通用工具</h2><h3 id="Microsoft-PowerToys"><a href="#Microsoft-PowerToys" class="headerlink" title="Microsoft PowerToys"></a>Microsoft PowerToys</h3><p>Microsoft PowerToys是一组小工具，用户可以利用该工具调整和简化其Windows 10体验，以提高工作效率。 </p><p><img src="power-toys.png" alt="power-toys.png"></p><p>目前支持的功能：</p><ul><li>Color Picker: 一个抓取颜色的小工具。快捷键：<code>Win + Shift + C</code>。没咋使用过，我对这个工具没啥需求。</li><li>FancyZones: Windows窗口管理工具，可以更加流畅高效地管理窗口布局。没用过。</li><li>File Explorer Add-ons: 增强文件管理器的预览功能，增加了对Markdown，SVG的预览支持。</li><li>Image Resizer: 图片大小调整工具。在图片上“右键”-&gt;“Resize Pictures”就能生成特定大小的图片。</li><li>Keyboard Manager: 快捷键管理工具。</li><li>PowerRename: 一个强大的文件重命名工具。在文件管理器中，选中多个文件就可以对多个文件按照指定规则重命名，选中文件夹可以递归重命名下面的文件。</li><li>PowerToys Run: 这是我最常用的一个工具之一，这是非常强大的工具。之后有空的话，单独开一篇聊聊这个工具。快捷键<code>Alt + Space</code></li><li>Shortcut Guide: 当长按 <code>Windows</code>键时，可以给你一些快捷键的提示。</li></ul><p>下载地址：<a href="https://github.com/microsoft/PowerToys/releases/">https://github.com/microsoft/PowerToys/releases/</a></p><h3 id="snipaste：一款强大的截图工具"><a href="#snipaste：一款强大的截图工具" class="headerlink" title="snipaste：一款强大的截图工具"></a>snipaste：一款强大的截图工具</h3><p>方案一：Windows 自带的 <code>Snip &amp; Sketch</code> 和 <code>Print Screen</code>。<code>Snip &amp; Sketch</code>可以使用快捷键 <code>Win + Shift + S</code>,如果截图使用不多的话，可以使用该工具。</p><p>方案二：一个第三方工具snipaste，很强大的一个截图工具，易用性高于Windows 10 自带的工具。下载地址：<a href="https://www.snipaste.com/">https://www.snipaste.com/</a></p><p><img src="snipaste.png" alt="snipaste.png"></p><h3 id="Bandizip：-解压工具"><a href="#Bandizip：-解压工具" class="headerlink" title="Bandizip： 解压工具"></a>Bandizip： 解压工具</h3><p>这是目前我自己最喜欢用的一款解压工具，没有发现明显的痛点。最开始使用的时候，该工具免费版本还没有内嵌广告，现在已经有广告了。</p><p><img src="bandizip.png" alt="bandizip.png"></p><p>下载地址：<a href="https://en.bandisoft.com/bandizip/">https://en.bandisoft.com/bandizip/</a></p><h3 id="EasySwitch：窗口切换工具"><a href="#EasySwitch：窗口切换工具" class="headerlink" title="EasySwitch：窗口切换工具"></a>EasySwitch：窗口切换工具</h3><p>虽然在<code>Windows 10</code>上可以使用<code>Alt + Tab</code>切换窗口，但是这个快捷键是跨多个应用的。于我而言，很多时候需要的是在同一个应用之间切换，比如多个Microsoft Word之间切换。</p><p>如果需要在多个应用之间切换窗口，可以使用<code>Alt + Tab</code>。</p><p>如果需要在同一个应用直接切换窗口可以使用<code>EasySwitch</code>，快捷键 <code>Alt + `</code></p><p>下载地址： <a href="https://neosmart.net/EasySwitch/">https://neosmart.net/EasySwitch/</a></p><h2 id="美化工具"><a href="#美化工具" class="headerlink" title="美化工具"></a>美化工具</h2><h3 id="动态壁纸工具：-WinDynamicDesktop"><a href="#动态壁纸工具：-WinDynamicDesktop" class="headerlink" title="动态壁纸工具： WinDynamicDesktop"></a>动态壁纸工具： WinDynamicDesktop</h3><p>该工具在Windows 10 上实现了macOS Mojave的动态壁纸功能。</p><p><img src="win-dynamical-desktop.png" alt="win-dynamical-desktop.png"></p><p>下载地址：<a href="https://github.com/t1m0thyj/WinDynamicDesktop">https://github.com/t1m0thyj/WinDynamicDesktop</a></p><h2 id="开发工具"><a href="#开发工具" class="headerlink" title="开发工具"></a>开发工具</h2><h3 id="Visual-Studio-Code"><a href="#Visual-Studio-Code" class="headerlink" title="Visual Studio Code"></a>Visual Studio Code</h3><p>Visual Studio Code，一个很强大的IDE。</p><p><img src="code.png" alt="code.png"></p><p>下载地址：<a href="https://code.visualstudio.com/">https://code.visualstudio.com/</a></p><h3 id="Hosts管理工具：Hozz"><a href="#Hosts管理工具：Hozz" class="headerlink" title="Hosts管理工具：Hozz"></a>Hosts管理工具：Hozz</h3><p>我有一个小小的内网，里面有很多的服务，目前阶段没有时间做DNS服务器，所以就需要一个随时切换Hosts，因此一款够用的Hosts工具就显得很重要。</p><p>Hozz就是这样一款工具，可以帮助我更快捷地访问自己服务。</p><p>下载地址：<a href="https://blog.zhangruipeng.me/Hozz/">https://blog.zhangruipeng.me/Hozz/</a></p>]]></content>
+    
+    
+    <summary type="html">&lt;p&gt;这篇博客主要记录我在Windows 10上使用的一些有提升效率或者花里胡哨的工具，会一直更新下去。毕竟是个软粉嘛。&lt;/p&gt;</summary>
+    
+    
+    
+    <category term="Long Term" scheme="https://chengqing.dev/categories/Long-Term/"/>
+    
+    <category term="Windows" scheme="https://chengqing.dev/categories/Windows/"/>
+    
+    
+    <category term="Windows 10" scheme="https://chengqing.dev/tags/Windows-10/"/>
+    
+    <category term="Tools" scheme="https://chengqing.dev/tags/Tools/"/>
+    
+  </entry>
+  
+</feed>

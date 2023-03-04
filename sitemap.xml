@@ -1,0 +1,1461 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  
+  <url>
+    <loc>https://chengqing.dev/tags/index.html</loc>
+    
+    <lastmod>2023-03-04</lastmod>
+    
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>https://chengqing.dev/categories/index.html</loc>
+    
+    <lastmod>2023-03-04</lastmod>
+    
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>https://chengqing.dev/2023/03/04/tencent-cloud-azure-ad-sso/</loc>
+    
+    <lastmod>2023-03-04</lastmod>
+    
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>https://chengqing.dev/2022/07/23/jenkins-deployment-and-integrate-with-aad/</loc>
+    
+    <lastmod>2022-07-23</lastmod>
+    
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>https://chengqing.dev/2022/01/13/wsl-development/</loc>
+    
+    <lastmod>2022-07-13</lastmod>
+    
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>https://chengqing.dev/2022/07/13/homelab-unified-authorization-authentication-1/</loc>
+    
+    <lastmod>2022-07-13</lastmod>
+    
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>https://chengqing.dev/2022/06/28/how-to-write-readme/</loc>
+    
+    <lastmod>2022-06-28</lastmod>
+    
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>https://chengqing.dev/2022/03/24/how-to-learning-git/</loc>
+    
+    <lastmod>2022-03-24</lastmod>
+    
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>https://chengqing.dev/2022/01/12/awtrix-hexo-leancloud-counter/</loc>
+    
+    <lastmod>2022-01-12</lastmod>
+    
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>https://chengqing.dev/2022/01/05/version-control/</loc>
+    
+    <lastmod>2022-01-05</lastmod>
+    
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>https://chengqing.dev/2021/12/30/2021-2022/</loc>
+    
+    <lastmod>2021-12-30</lastmod>
+    
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>https://chengqing.dev/2021/04/24/long-term-wsl/</loc>
+    
+    <lastmod>2021-12-26</lastmod>
+    
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>https://chengqing.dev/2021/12/20/gitlab-waiting-for-approval/</loc>
+    
+    <lastmod>2021-12-20</lastmod>
+    
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>https://chengqing.dev/2021/12/11/gitlab-dynamic-pipeline/</loc>
+    
+    <lastmod>2021-12-11</lastmod>
+    
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>https://chengqing.dev/2021/10/26/refactor-desk-1-0/</loc>
+    
+    <lastmod>2021-10-26</lastmod>
+    
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>https://chengqing.dev/2021/10/19/homelab-backup-vsphere-vm-to-synology/</loc>
+    
+    <lastmod>2021-10-19</lastmod>
+    
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>https://chengqing.dev/2021/10/18/what-is-devops/</loc>
+    
+    <lastmod>2021-10-18</lastmod>
+    
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>https://chengqing.dev/2021/06/21/homelab-xiaomi-smarthome/</loc>
+    
+    <lastmod>2021-06-21</lastmod>
+    
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>https://chengqing.dev/2021/05/31/some-devops-practices/</loc>
+    
+    <lastmod>2021-05-31</lastmod>
+    
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>https://chengqing.dev/2021/05/25/why-containerize-local-dev-env/</loc>
+    
+    <lastmod>2021-05-25</lastmod>
+    
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>https://chengqing.dev/2020/05/09/what-is-pipeline/</loc>
+    
+    <lastmod>2021-04-24</lastmod>
+    
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>https://chengqing.dev/2021/04/24/what-is-ci-cd/</loc>
+    
+    <lastmod>2021-04-24</lastmod>
+    
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>https://chengqing.dev/2021/04/04/long-term-windows-tools/</loc>
+    
+    <lastmod>2021-04-24</lastmod>
+    
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>https://chengqing.dev/2021/03/28/monitor-your-router/</loc>
+    
+    <lastmod>2021-03-28</lastmod>
+    
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>https://chengqing.dev/2021/03/22/devops-history/</loc>
+    
+    <lastmod>2021-03-22</lastmod>
+    
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>https://chengqing.dev/2021/03/07/nginx-proxy-ssl-server-name/</loc>
+    
+    <lastmod>2021-03-07</lastmod>
+    
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>https://chengqing.dev/2021/01/17/lambda-deployment-via-terraform/</loc>
+    
+    <lastmod>2021-01-17</lastmod>
+    
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>https://chengqing.dev/2021/01/02/chengdu-to-singapore/</loc>
+    
+    <lastmod>2021-01-02</lastmod>
+    
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>https://chengqing.dev/2021/01/01/wls-symlink/</loc>
+    
+    <lastmod>2021-01-01</lastmod>
+    
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>https://chengqing.dev/2020/12/31/2020-2021/</loc>
+    
+    <lastmod>2020-12-31</lastmod>
+    
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>https://chengqing.dev/2020/12/04/get-gradle-project-version-via-shell/</loc>
+    
+    <lastmod>2020-12-04</lastmod>
+    
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>https://chengqing.dev/2020/11/24/one-key-change-ssh-password-to-key-pair/</loc>
+    
+    <lastmod>2020-11-24</lastmod>
+    
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>https://chengqing.dev/2020/11/21/one-key-upgrade-k8s-cluster/</loc>
+    
+    <lastmod>2020-11-21</lastmod>
+    
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>https://chengqing.dev/2020/10/02/laravel-mock-trait/</loc>
+    
+    <lastmod>2020-10-02</lastmod>
+    
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>https://chengqing.dev/2020/09/29/laravel-mock-curl/</loc>
+    
+    <lastmod>2020-09-29</lastmod>
+    
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>https://chengqing.dev/2020/07/15/delete-ele-from-array/</loc>
+    
+    <lastmod>2020-07-15</lastmod>
+    
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>https://chengqing.dev/2020/06/09/config-map/</loc>
+    
+    <lastmod>2020-06-09</lastmod>
+    
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>https://chengqing.dev/2020/05/06/pvc-lifecycle/</loc>
+    
+    <lastmod>2020-05-06</lastmod>
+    
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>https://chengqing.dev/2020/03/26/pvc/</loc>
+    
+    <lastmod>2020-03-26</lastmod>
+    
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>https://chengqing.dev/2020/03/25/pv/</loc>
+    
+    <lastmod>2020-03-25</lastmod>
+    
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>https://chengqing.dev/2020/03/21/protect-your-digital-assets/</loc>
+    
+    <lastmod>2020-03-21</lastmod>
+    
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>https://chengqing.dev/2020/03/20/rancher-vsphere-cluster/</loc>
+    
+    <lastmod>2020-03-20</lastmod>
+    
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>https://chengqing.dev/2020/03/17/volumes/</loc>
+    
+    <lastmod>2020-03-17</lastmod>
+    
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>https://chengqing.dev/2020/03/02/auto-script/</loc>
+    
+    <lastmod>2020-03-02</lastmod>
+    
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>https://chengqing.dev/2020/02/29/service/</loc>
+    
+    <lastmod>2020-02-29</lastmod>
+    
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>https://chengqing.dev/2020/02/26/job/</loc>
+    
+    <lastmod>2020-02-26</lastmod>
+    
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>https://chengqing.dev/2020/02/21/daemon-set/</loc>
+    
+    <lastmod>2020-02-21</lastmod>
+    
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>https://chengqing.dev/2020/02/20/stateful-set/</loc>
+    
+    <lastmod>2020-02-20</lastmod>
+    
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>https://chengqing.dev/2020/02/13/deployments/</loc>
+    
+    <lastmod>2020-02-13</lastmod>
+    
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>https://chengqing.dev/2020/02/11/replica-set/</loc>
+    
+    <lastmod>2020-02-11</lastmod>
+    
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>https://chengqing.dev/2020/02/01/pod-container-probe/</loc>
+    
+    <lastmod>2020-02-01</lastmod>
+    
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>https://chengqing.dev/2020/01/24/pod-init-containers/</loc>
+    
+    <lastmod>2020-01-24</lastmod>
+    
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>https://chengqing.dev/2020/01/22/aws-data-transfer/</loc>
+    
+    <lastmod>2020-01-22</lastmod>
+    
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>https://chengqing.dev/2020/01/20/pod-lifecycle/</loc>
+    
+    <lastmod>2020-01-20</lastmod>
+    
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>https://chengqing.dev/2020/01/15/pod-overview/</loc>
+    
+    <lastmod>2020-01-15</lastmod>
+    
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>https://chengqing.dev/2020/01/14/aws-ecs-rolling-deployment/</loc>
+    
+    <lastmod>2020-01-14</lastmod>
+    
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>https://chengqing.dev/2019/12/31/2019to2020/</loc>
+    
+    <lastmod>2019-12-31</lastmod>
+    
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>https://chengqing.dev/2019/11/07/kvm-practice/</loc>
+    
+    <lastmod>2019-11-07</lastmod>
+    
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+
+  <url>
+    <loc>https://chengqing.dev/</loc>
+    <lastmod>2023-03-04</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>1.0</priority>
+  </url>
+
+  
+  <url>
+    <loc>https://chengqing.dev/tags/2019/</loc>
+    <lastmod>2023-03-04</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>https://chengqing.dev/tags/2020/</loc>
+    <lastmod>2023-03-04</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>https://chengqing.dev/tags/%E6%80%BB%E7%BB%93/</loc>
+    <lastmod>2023-03-04</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>https://chengqing.dev/tags/2021/</loc>
+    <lastmod>2023-03-04</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>https://chengqing.dev/tags/AutoScript/</loc>
+    <lastmod>2023-03-04</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>https://chengqing.dev/tags/DevOps/</loc>
+    <lastmod>2023-03-04</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>https://chengqing.dev/tags/aws/</loc>
+    <lastmod>2023-03-04</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>https://chengqing.dev/tags/data-transfer/</loc>
+    <lastmod>2023-03-04</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>https://chengqing.dev/tags/ec2/</loc>
+    <lastmod>2023-03-04</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>https://chengqing.dev/tags/s3/</loc>
+    <lastmod>2023-03-04</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>https://chengqing.dev/tags/ecs/</loc>
+    <lastmod>2023-03-04</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>https://chengqing.dev/tags/deployment/</loc>
+    <lastmod>2023-03-04</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>https://chengqing.dev/tags/rolling-upate/</loc>
+    <lastmod>2023-03-04</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>https://chengqing.dev/tags/Homelab/</loc>
+    <lastmod>2023-03-04</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>https://chengqing.dev/tags/AWTRIX/</loc>
+    <lastmod>2023-03-04</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>https://chengqing.dev/tags/Chengdu/</loc>
+    <lastmod>2023-03-04</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>https://chengqing.dev/tags/Singapore/</loc>
+    <lastmod>2023-03-04</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>https://chengqing.dev/tags/EP/</loc>
+    <lastmod>2023-03-04</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>https://chengqing.dev/tags/%E5%87%BA%E5%9B%BD%E5%8A%A1%E5%B7%A5%E4%BA%BA%E5%91%98/</loc>
+    <lastmod>2023-03-04</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>https://chengqing.dev/tags/Kubernetes/</loc>
+    <lastmod>2023-03-04</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>https://chengqing.dev/tags/ConfigMap/</loc>
+    <lastmod>2023-03-04</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>https://chengqing.dev/tags/k8s/</loc>
+    <lastmod>2023-03-04</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>https://chengqing.dev/tags/DaemonSet/</loc>
+    <lastmod>2023-03-04</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>https://chengqing.dev/tags/Controller/</loc>
+    <lastmod>2023-03-04</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>https://chengqing.dev/tags/Shell/</loc>
+    <lastmod>2023-03-04</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>https://chengqing.dev/tags/Array/</loc>
+    <lastmod>2023-03-04</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>https://chengqing.dev/tags/Deployment/</loc>
+    <lastmod>2023-03-04</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>https://chengqing.dev/tags/History/</loc>
+    <lastmod>2023-03-04</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>https://chengqing.dev/tags/%E5%8E%86%E5%8F%B2/</loc>
+    <lastmod>2023-03-04</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>https://chengqing.dev/tags/Tips/</loc>
+    <lastmod>2023-03-04</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>https://chengqing.dev/tags/%E6%8F%90%E5%8D%87%E6%95%88%E7%8E%87/</loc>
+    <lastmod>2023-03-04</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>https://chengqing.dev/tags/Gitlab/</loc>
+    <lastmod>2023-03-04</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>https://chengqing.dev/tags/%E5%8A%A8%E6%80%81pipeline/</loc>
+    <lastmod>2023-03-04</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>https://chengqing.dev/tags/%E6%89%8B%E5%8A%A8Job/</loc>
+    <lastmod>2023-03-04</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>https://chengqing.dev/tags/%E7%BE%A4%E6%99%96/</loc>
+    <lastmod>2023-03-04</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>https://chengqing.dev/tags/Synology/</loc>
+    <lastmod>2023-03-04</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>https://chengqing.dev/tags/Active-Backup-for-Business/</loc>
+    <lastmod>2023-03-04</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>https://chengqing.dev/tags/Esxi/</loc>
+    <lastmod>2023-03-04</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>https://chengqing.dev/tags/vSphere/</loc>
+    <lastmod>2023-03-04</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>https://chengqing.dev/tags/%E5%A4%87%E4%BB%BD/</loc>
+    <lastmod>2023-03-04</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>https://chengqing.dev/tags/Authorization/</loc>
+    <lastmod>2023-03-04</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>https://chengqing.dev/tags/Authentication/</loc>
+    <lastmod>2023-03-04</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>https://chengqing.dev/tags/SSO/</loc>
+    <lastmod>2023-03-04</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>https://chengqing.dev/tags/Azure/</loc>
+    <lastmod>2023-03-04</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>https://chengqing.dev/tags/Azure-Active-Directory/</loc>
+    <lastmod>2023-03-04</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>https://chengqing.dev/tags/%E5%B0%8F%E7%B1%B3/</loc>
+    <lastmod>2023-03-04</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>https://chengqing.dev/tags/%E6%99%BA%E8%83%BD%E5%AE%B6%E5%B1%85/</loc>
+    <lastmod>2023-03-04</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>https://chengqing.dev/tags/Git/</loc>
+    <lastmod>2023-03-04</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>https://chengqing.dev/tags/Version-Control/</loc>
+    <lastmod>2023-03-04</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>https://chengqing.dev/tags/Development/</loc>
+    <lastmod>2023-03-04</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>https://chengqing.dev/tags/README/</loc>
+    <lastmod>2023-03-04</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>https://chengqing.dev/tags/Jenkins/</loc>
+    <lastmod>2023-03-04</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>https://chengqing.dev/tags/Job/</loc>
+    <lastmod>2023-03-04</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>https://chengqing.dev/tags/kvm/</loc>
+    <lastmod>2023-03-04</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>https://chengqing.dev/tags/%E4%BA%91%E8%AE%A1%E7%AE%97/</loc>
+    <lastmod>2023-03-04</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>https://chengqing.dev/tags/Terraform/</loc>
+    <lastmod>2023-03-04</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>https://chengqing.dev/tags/AWS-Lambda/</loc>
+    <lastmod>2023-03-04</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>https://chengqing.dev/tags/PHP/</loc>
+    <lastmod>2023-03-04</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>https://chengqing.dev/tags/curl/</loc>
+    <lastmod>2023-03-04</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>https://chengqing.dev/tags/mock/</loc>
+    <lastmod>2023-03-04</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>https://chengqing.dev/tags/in-built/</loc>
+    <lastmod>2023-03-04</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>https://chengqing.dev/tags/Laravel/</loc>
+    <lastmod>2023-03-04</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>https://chengqing.dev/tags/Windows-10/</loc>
+    <lastmod>2023-03-04</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>https://chengqing.dev/tags/Tools/</loc>
+    <lastmod>2023-03-04</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>https://chengqing.dev/tags/WSL/</loc>
+    <lastmod>2023-03-04</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>https://chengqing.dev/tags/%E5%AE%B6%E5%BA%AD%E7%BD%91%E7%BB%9C/</loc>
+    <lastmod>2023-03-04</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>https://chengqing.dev/tags/%E7%9B%91%E6%8E%A7/</loc>
+    <lastmod>2023-03-04</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>https://chengqing.dev/tags/Prometheus/</loc>
+    <lastmod>2023-03-04</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>https://chengqing.dev/tags/Node-Exporter/</loc>
+    <lastmod>2023-03-04</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>https://chengqing.dev/tags/Grafana/</loc>
+    <lastmod>2023-03-04</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>https://chengqing.dev/tags/%E8%B8%A9%E5%9D%91/</loc>
+    <lastmod>2023-03-04</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>https://chengqing.dev/tags/Nginx/</loc>
+    <lastmod>2023-03-04</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>https://chengqing.dev/tags/SSH/</loc>
+    <lastmod>2023-03-04</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>https://chengqing.dev/tags/pod/</loc>
+    <lastmod>2023-03-04</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>https://chengqing.dev/tags/pod-lifecycle/</loc>
+    <lastmod>2023-03-04</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>https://chengqing.dev/tags/password/</loc>
+    <lastmod>2023-03-04</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>https://chengqing.dev/tags/%E5%AF%86%E7%A0%81/</loc>
+    <lastmod>2023-03-04</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>https://chengqing.dev/tags/%E6%96%87%E4%BB%B6%E5%A4%87%E4%BB%BD/</loc>
+    <lastmod>2023-03-04</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>https://chengqing.dev/tags/NAS/</loc>
+    <lastmod>2023-03-04</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>https://chengqing.dev/tags/Storage/</loc>
+    <lastmod>2023-03-04</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>https://chengqing.dev/tags/PersistentVolumes/</loc>
+    <lastmod>2023-03-04</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>https://chengqing.dev/tags/PersistentVolumeClaim/</loc>
+    <lastmod>2023-03-04</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>https://chengqing.dev/tags/PersistentVolume/</loc>
+    <lastmod>2023-03-04</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>https://chengqing.dev/tags/Rancher/</loc>
+    <lastmod>2023-03-04</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>https://chengqing.dev/tags/%E6%A1%8C%E9%9D%A2%E6%94%B9%E9%80%A0/</loc>
+    <lastmod>2023-03-04</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>https://chengqing.dev/tags/ReplicaSet/</loc>
+    <lastmod>2023-03-04</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>https://chengqing.dev/tags/Service/</loc>
+    <lastmod>2023-03-04</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>https://chengqing.dev/tags/%E5%AE%9E%E8%B7%B5/</loc>
+    <lastmod>2023-03-04</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>https://chengqing.dev/tags/Best-Practices/</loc>
+    <lastmod>2023-03-04</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>https://chengqing.dev/tags/%E9%9B%B6%E6%89%8B%E5%8A%A8%E6%93%8D%E4%BD%9C/</loc>
+    <lastmod>2023-03-04</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>https://chengqing.dev/tags/%E7%AB%A5%E5%AD%90%E5%86%9B%E5%86%9B%E8%A7%84/</loc>
+    <lastmod>2023-03-04</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>https://chengqing.dev/tags/%E5%A5%A5%E5%8D%A1%E5%A7%86%E5%89%83%E5%88%80/</loc>
+    <lastmod>2023-03-04</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>https://chengqing.dev/tags/StatefulSet/</loc>
+    <lastmod>2023-03-04</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>https://chengqing.dev/tags/Tencent-Cloud/</loc>
+    <lastmod>2023-03-04</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>https://chengqing.dev/tags/Volume/</loc>
+    <lastmod>2023-03-04</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>https://chengqing.dev/tags/Continuous-Integration/</loc>
+    <lastmod>2023-03-04</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>https://chengqing.dev/tags/Continuous-Delivery/</loc>
+    <lastmod>2023-03-04</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>https://chengqing.dev/tags/Continuous-Deployment/</loc>
+    <lastmod>2023-03-04</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>https://chengqing.dev/tags/Pipeline/</loc>
+    <lastmod>2023-03-04</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>https://chengqing.dev/tags/%E5%BC%80%E5%8F%91%E7%8E%AF%E5%A2%83/</loc>
+    <lastmod>2023-03-04</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>https://chengqing.dev/tags/%E5%AE%B9%E5%99%A8%E5%8C%96/</loc>
+    <lastmod>2023-03-04</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>https://chengqing.dev/tags/%E8%87%AA%E5%8A%A8%E5%8C%96%E8%84%9A%E6%9C%AC/</loc>
+    <lastmod>2023-03-04</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>https://chengqing.dev/tags/%E9%9A%90%E6%80%A7%E4%B8%8A%E4%B8%8B%E6%96%87/</loc>
+    <lastmod>2023-03-04</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>https://chengqing.dev/tags/wsl/</loc>
+    <lastmod>2023-03-04</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>https://chengqing.dev/tags/symlink/</loc>
+    <lastmod>2023-03-04</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>https://chengqing.dev/tags/development/</loc>
+    <lastmod>2023-03-04</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+
+  
+  <url>
+    <loc>https://chengqing.dev/categories/Life/</loc>
+    <lastmod>2023-03-04</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>https://chengqing.dev/categories/DevOps/</loc>
+    <lastmod>2023-03-04</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>https://chengqing.dev/categories/Cloud-Computing/</loc>
+    <lastmod>2023-03-04</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>https://chengqing.dev/categories/Homelab/</loc>
+    <lastmod>2023-03-04</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>https://chengqing.dev/categories/Travel/</loc>
+    <lastmod>2023-03-04</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>https://chengqing.dev/categories/Kubernetes/</loc>
+    <lastmod>2023-03-04</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>https://chengqing.dev/categories/Linux/</loc>
+    <lastmod>2023-03-04</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>https://chengqing.dev/categories/Cloud-Computing/Public-Cloud-Provider/</loc>
+    <lastmod>2023-03-04</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>https://chengqing.dev/categories/DevOps/Gitlab/</loc>
+    <lastmod>2023-03-04</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>https://chengqing.dev/categories/Travel/Singapore/</loc>
+    <lastmod>2023-03-04</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>https://chengqing.dev/categories/Development/</loc>
+    <lastmod>2023-03-04</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>https://chengqing.dev/categories/DevOps/Jenkins/</loc>
+    <lastmod>2023-03-04</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>https://chengqing.dev/categories/Cloud-Computing/Virtualization/</loc>
+    <lastmod>2023-03-04</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>https://chengqing.dev/categories/DevOps/Terraform/</loc>
+    <lastmod>2023-03-04</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>https://chengqing.dev/categories/Linux/Shell/</loc>
+    <lastmod>2023-03-04</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>https://chengqing.dev/categories/Long-Term/</loc>
+    <lastmod>2023-03-04</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>https://chengqing.dev/categories/Cloud-Computing/Public-Cloud-Provider/AWS/</loc>
+    <lastmod>2023-03-04</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>https://chengqing.dev/categories/%E8%B8%A9%E5%9D%91%E5%A4%87%E5%BF%98%E5%BD%95/</loc>
+    <lastmod>2023-03-04</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>https://chengqing.dev/categories/Experience/</loc>
+    <lastmod>2023-03-04</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>https://chengqing.dev/categories/Cloud-Computing/Public-Cloud-Provider/Azure/</loc>
+    <lastmod>2023-03-04</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>https://chengqing.dev/categories/DevOps/Version-Control/</loc>
+    <lastmod>2023-03-04</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>https://chengqing.dev/categories/Windows/</loc>
+    <lastmod>2023-03-04</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>https://chengqing.dev/categories/Development/PHP/</loc>
+    <lastmod>2023-03-04</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>https://chengqing.dev/categories/Cloud-Computing/Public-Cloud-Provider/Tencent-Cloud/</loc>
+    <lastmod>2023-03-04</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>https://chengqing.dev/categories/Windows/WSL/</loc>
+    <lastmod>2023-03-04</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>https://chengqing.dev/categories/Development/PHP/Laravel/</loc>
+    <lastmod>2023-03-04</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+</urlset>
